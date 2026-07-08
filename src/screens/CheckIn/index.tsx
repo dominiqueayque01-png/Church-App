@@ -44,9 +44,10 @@ type Props = {
   eventName: string;
   onBack: () => void;
   onNavigateToNewMember: () => void;
+  onOpenSidebar?: () => void;
 };
 
-export default function CheckInScreen({ eventId, eventName, onBack, onNavigateToNewMember }: Props) {
+export default function CheckInScreen({ eventId, eventName, onBack, onNavigateToNewMember, onOpenSidebar }: Props) {
 
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
@@ -199,6 +200,11 @@ export default function CheckInScreen({ eventId, eventName, onBack, onNavigateTo
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
+              <TouchableOpacity style={styles.burger} onPress={onOpenSidebar}>
+                <View style={styles.burgerLine} />
+                <View style={styles.burgerLine} />
+                <View style={styles.burgerLine} />
+  </TouchableOpacity>
             <View>
               <Text style={styles.headerTitle}>{eventName}</Text>
               <Text style={styles.headerDate}>{getFormattedDate()}</Text>
@@ -504,4 +510,15 @@ const styles = StyleSheet.create({
     color: '#999',
     fontWeight: '600',
   },
+  burger: {
+  gap: 5,
+  padding: 8,
+  marginRight: 4,
+},
+burgerLine: {
+  height: 2,
+  width: 22,
+  backgroundColor: '#b5973a',
+  borderRadius: 2,
+},
 });

@@ -4,7 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {
   SafeAreaView,
   View,
-  TouchableOpacity,
   StyleSheet,
 } from 'react-native';
 
@@ -20,58 +19,58 @@ export type RootStackParamList = {
   NewMember: { eventId?: string };
   Dashboard: undefined;
 };
+const MINI_WIDTH = 52;
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-// Screens that are sidebar-navigable — pre-mounted, just hidden/shown
-const SIDEBAR_SCREENS = ['EventSelect', 'NewMember'];
-
 export default function Navigation() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('EventSelect');
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      onStateChange={state => {
+        const currentRoute = state?.routes[state.index ?? 0]?.name;
+        if (currentRoute) setActiveTab(currentRoute);
+      }}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
 
-          {/* Persistent Sidebar */}
+          {/* Sidebar — always visible as mini strip */}
+          <Sidebar
+            activeScreen={activeTab}
+            isOpen={sidebarOpen}
+            onCollapse={() => setSidebarOpen(false)}
+            onExpand={() => setSidebarOpen(true)}
+            onNavigate={(screen: string) => {
+              setActiveTab(screen);
+              setSidebarOpen(false);
+            }}
+          />
+
+          {/* Overlay when sidebar open */}
           {sidebarOpen && (
-            <Sidebar
-              activeScreen={activeTab}
-              onCollapse={() => setSidebarOpen(false)}
-              onNavigate={(screen: string) => setActiveTab(screen)}
+            <View
+              style={styles.overlay}
+              onTouchStart={() => setSidebarOpen(false)}
             />
           )}
 
           {/* Main Content */}
           <View style={styles.main}>
-
-            {/* Top bar burger when sidebar closed */}
-            {!sidebarOpen && (
-              <View style={styles.topBar}>
-                <TouchableOpacity
-                  style={styles.burgerButton}
-                  onPress={() => setSidebarOpen(true)}>
-                  <View style={styles.toggleLine} />
-                  <View style={styles.toggleLine} />
-                  <View style={styles.toggleLine} />
-                </TouchableOpacity>
-              </View>
-            )}
-
-            {/* Pre-mounted screens — shown/hidden instantly */}
             <View style={[styles.screen, activeTab !== 'EventSelect' && styles.hidden]}>
-              <EventSelectScreen onNavigateToCheckIn={(eventId, eventName) => {
-                setActiveTab('CheckIn_' + eventId + '_' + eventName);
-              }} />
+              <EventSelectScreen
+                onNavigateToCheckIn={(eventId, eventName) => {
+                  setActiveTab('CheckIn_' + eventId + '_' + eventName);
+                }}
+                onOpenSidebar={() => setSidebarOpen(true)}
+              />
             </View>
 
             <View style={[styles.screen, activeTab !== 'NewMember' && styles.hidden]}>
               <NewMemberScreen />
             </View>
 
-            {/* CheckIn uses Stack since it needs params */}
             {activeTab.startsWith('CheckIn_') && (
               <View style={styles.screen}>
                 <CheckInScreen
@@ -82,8 +81,8 @@ export default function Navigation() {
                 />
               </View>
             )}
-
           </View>
+
         </View>
       </SafeAreaView>
     </NavigationContainer>
@@ -110,21 +109,14 @@ const styles = StyleSheet.create({
   hidden: {
     display: 'none',
   },
-  topBar: {
-    height: 48,
-    backgroundColor: '#2c2c2c',
-    justifyContent: 'center',
-    paddingHorizontal: 12,
-  },
-  burgerButton: {
-    gap: 5,
-    padding: 6,
-    alignSelf: 'flex-start',
-  },
-  toggleLine: {
-    height: 2,
-    width: 22,
-    backgroundColor: '#b5973a',
-    borderRadius: 2,
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: MINI_WIDTH,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    zIndex: 98,
   },
 });
+

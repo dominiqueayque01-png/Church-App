@@ -35,13 +35,25 @@ function getFormattedDate() {
 
 type Props = {
   onNavigateToCheckIn: (eventId: string, eventName: string) => void;
+  onOpenSidebar: () => void;
 };
 
-export default function EventSelectScreen({ onNavigateToCheckIn }: Props) {
+
+
+export default function EventSelectScreen({ onNavigateToCheckIn, onOpenSidebar }: Props) {
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
 
-  return (
+  return (  
+   <> 
+   {/* Burger Button */}
+    <TouchableOpacity style={styles.burger} onPress={onOpenSidebar}>
+      <View style={styles.burgerLine} />
+      <View style={styles.burgerLine} />
+      <View style={styles.burgerLine} />
+    </TouchableOpacity>
+
+
     <View style={styles.container}>
       <Text style={styles.dateText}>{getFormattedDate()}</Text>
       <Text style={styles.title}>Select Service</Text>
@@ -75,8 +87,11 @@ export default function EventSelectScreen({ onNavigateToCheckIn }: Props) {
         ))}
       </ScrollView>
     </View>
+    </>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -151,4 +166,19 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.75)',
     fontWeight: '500',
   },
+burger: {
+  position: 'absolute',
+  top: 16,
+  left: 16,
+  zIndex: 10,
+  gap: 5,
+  padding: 8,
+},
+burgerLine: {
+  height: 2,
+  width: 22,
+  backgroundColor: '#3d3020',
+  borderRadius: 2,
+},
+  
 });
