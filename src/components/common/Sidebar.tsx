@@ -1,39 +1,43 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   Animated,
+  Modal,
 } from 'react-native';
-
+import { styles, PANEL_WIDTH } from './Sidebar.styles';
+ 
 const SIDEBAR_ITEMS = [
   { icon: '⌕', label: 'Service Check-in', screen: 'EventSelect' },
   { icon: '⊕', label: 'Member Registration', screen: 'NewMember' },
 ];
-
+ 
 type Props = {
   activeScreen: string;
   onCollapse: () => void;
   onExpand: () => void;
   isOpen: boolean;
   onNavigate: (screen: string) => void;
+  currentUser: { name: string; username: string; role: string };
+  onLogout: () => void;
+  username: string;
 };
-
-const FULL_WIDTH = 260;
-const MINI_WIDTH = 52;
-const PANEL_WIDTH = FULL_WIDTH - MINI_WIDTH;
-
+ 
 export default function Sidebar({
   activeScreen,
   onCollapse,
   onExpand,
   isOpen,
   onNavigate,
+  currentUser,
+  onLogout,
+  username,
 }: Props) {
   // Start HIDDEN (tucked off-screen behind the mini strip), not at 0.
   const slideAnim = useRef(new Animated.Value(-PANEL_WIDTH)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const collapsedFade = useRef(new Animated.Value(1)).current;
 
   // Mini nav icons fade out exactly as the expanded panel's icons fade in,
   // so only one set of icons is ever visible at a time.
@@ -50,6 +54,11 @@ export default function Sidebar({
           useNativeDriver: true,
           tension: 80,
           friction: 12,
+        }),
+        Animated.timing(collapsedFade, {
+          toValue: 0,
+          duration: 80,
+          useNativeDriver: true,
         }),
         Animated.timing(fadeAnim, {
           toValue: 1,
@@ -71,9 +80,46 @@ export default function Sidebar({
           duration: 80,
           useNativeDriver: true,
         }),
+        Animated.timing(collapsedFade, {
+          toValue: 1,
+          duration: 200,
+          delay: 100,
+          useNativeDriver: true,
+        }),
       ]).start();
     }
   }, [isOpen]);
+
+const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+
+  const handleLogout = () => {
+    setLogoutModalVisible(true);
+  };
+
+ const confirmLogout = () => {
+    setLogoutModalVisible(false);
+    onLogout();
+  };
+
+  const cancelLogout = () => {
+    setLogoutModalVisible(false);
+  };
+
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+    }
+    return name[0].toUpperCase();
+  };
+
+  const getRoleBadgeColor = (role: string) => {
+    switch (role.toLowerCase()) {
+      case 'admin': return '#e74c3c';
+      case 'usher': return '#27ae60';
+      default: return '#b5973a';
+    }
+  };
 
   return (
     <View style={styles.wrapper}>
@@ -88,6 +134,17 @@ export default function Sidebar({
           <View style={styles.toggleLine} />
           <View style={styles.toggleLine} />
         </TouchableOpacity>
+
+        {/* Collapsed mini avatar */}
+        <Animated.View
+          style={[styles.collapsedAccount, { opacity: collapsedFade }]}
+          pointerEvents={isOpen ? 'none' : 'auto'}>
+          <TouchableOpacity style={styles.miniAvatar} onPress={onExpand}>
+            <Text style={styles.miniAvatarText}>
+              {getInitials(currentUser.name)}
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
 
         {/* Mini icons — hidden while the expanded panel is open so the
             same icon doesn't render twice side by side */}
@@ -143,6 +200,48 @@ export default function Sidebar({
           ))}
         </Animated.View>
 
+                {/* ── Account Section ── */}
+      <View style={styles.accountSection}>
+        <View style={styles.accountDivider} />
+
+
+        {/* Expanded account card */}
+        <Animated.View
+          style={[styles.expandedAccount, { opacity: fadeAnim }]}
+          pointerEvents={isOpen ? 'auto' : 'none'}>
+          <View style={styles.profileCard}>
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>
+                {getInitials(currentUser.name)}
+              </Text>
+            </View>
+            <View style={styles.profileInfo}>
+              <Text style={styles.profileName} numberOfLines={1}>
+                {currentUser.name}
+              </Text>
+              <Text style={styles.profileUsername} numberOfLines={1}>
+                @{currentUser.username}
+              </Text>
+              <View style={[
+                styles.roleBadge,
+                { backgroundColor: getRoleBadgeColor(currentUser.role) },
+              ]}>
+                <Text style={styles.roleBadgeText}>{currentUser.role}</Text>
+              </View>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={handleLogout}
+            activeOpacity={0.8}>
+            <Text style={styles.logoutIcon}>⎋</Text>
+            <Text style={styles.logoutText}>Sign Out</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+
+
         {/* Online status */}
         <View style={styles.bottomStatus}>
           <View style={styles.onlineDot} />
@@ -151,132 +250,67 @@ export default function Sidebar({
 
       </Animated.View>
 
+          {/* User Info + Logout — fades in when open */}
+<Animated.View style={[styles.userSection, { opacity: fadeAnim }]}>
+  <View style={styles.userDivider} />
+  <View style={styles.userInfo}>
+    <View style={styles.userAvatar}>
+      <Text style={styles.userAvatarText}>
+        {currentUser.name[0]}
+      </Text>
+    </View>
+    <View style={styles.userDetails}>
+      <Text style={styles.userName} numberOfLines={1}>
+        {currentUser.name}
+      </Text>
+      <Text style={styles.userRole}>{currentUser.role}</Text>
+    </View>
+  </View>
+  
+      {/* ── Sign Out Confirmation Modal ── */}
+      <Modal
+        visible={logoutModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={cancelLogout}>
+        <TouchableOpacity
+          style={styles.logoutModalOverlay}
+          activeOpacity={1}
+          onPress={cancelLogout}>
+          <TouchableOpacity activeOpacity={1} style={styles.logoutModalCard}>
+            <View style={styles.logoutModalIconWrap}>
+              <Text style={styles.logoutModalIcon}>⎋</Text>
+            </View>
+ 
+            <Text style={styles.logoutModalTitle}>Sign Out</Text>
+            <Text style={styles.logoutModalMessage}>
+              Are you sure you want to sign out, {currentUser.name}?
+            </Text>
+ 
+            <View style={styles.logoutModalActions}>
+              <TouchableOpacity
+                style={styles.logoutModalCancel}
+                onPress={cancelLogout}
+                activeOpacity={0.8}>
+                <Text style={styles.logoutModalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.logoutModalConfirm}
+                onPress={confirmLogout}
+                activeOpacity={0.8}>
+                <Text style={styles.logoutModalConfirmText}>Sign Out</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+  
+</Animated.View>
+
+ 
+
+
+
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    position: 'relative',
-    zIndex: 99,
-  },
-
-  // ── MINI SIDEBAR (always visible) ──────────────────
-  miniSidebar: {
-    width: MINI_WIDTH,
-    backgroundColor: '#2c2c2c',
-    paddingTop: 16,
-    zIndex: 100,
-    elevation: 17, // must beat expandedPanel's elevation on Android or icons can get painted underneath
-    height: '100%',
-  },
-  burgerButton: {
-    gap: 5,
-    padding: 10,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  toggleLine: {
-    height: 2,
-    width: 22,
-    backgroundColor: '#b5973a',
-    borderRadius: 2,
-  },
-  miniNav: {
-    paddingTop: 8,
-  },
-  miniItem: {
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderLeftWidth: 3,
-    borderLeftColor: 'transparent',
-  },
-  miniItemActive: {
-    backgroundColor: 'rgba(181,151,58,0.15)',
-    borderLeftColor: '#b5973a',
-  },
-  miniIcon: {
-    fontSize: 18,
-    color: '#b5973a',
-  },
-
-  // ── EXPANDED PANEL (slides out) ─────────────────────
-  expandedPanel: {
-    position: 'absolute',
-    top: 0,
-    left: MINI_WIDTH,
-    width: PANEL_WIDTH,
-    height: '100%',
-    backgroundColor: '#2c2c2c',
-    zIndex: 99,
-    paddingTop: 16,
-    elevation: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    overflow: 'hidden',
-  },
-  churchInfo: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  churchName: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 4,
-  },
-  churchSubtitle: {
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.5)',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    marginBottom: 8,
-  },
-  expandedNav: {
-    paddingTop: 8,
-  },
-  expandedItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 12,
-    borderLeftWidth: 3,
-    borderLeftColor: 'transparent',
-  },
-  expandedItemActive: {
-    backgroundColor: 'rgba(181,151,58,0.15)',
-    borderLeftColor: '#b5973a',
-  },
-  expandedIcon: {
-    fontSize: 18,
-    color: '#b5973a',
-  },
-  expandedLabel: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.85)',
-    fontWeight: '500',
-  },
-  bottomStatus: {
-    position: 'absolute',
-    bottom: 24,
-    left: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  onlineDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#27ae60',
-  },
-  onlineText: {
-    fontSize: 11,
-    color: 'rgba(255,255,255,0.5)',
-  },
-});

@@ -6,6 +6,7 @@ export default function DashboardScreen() {
     <View style={styles.container}>
       <Text style={styles.text}>Dashboard Screen</Text>
     </View>
+
   );
 }
 
