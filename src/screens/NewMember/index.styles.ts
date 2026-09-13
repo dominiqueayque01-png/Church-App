@@ -1,81 +1,110 @@
 import { StyleSheet } from 'react-native';
+import { colors, radius, shadows, spacing } from '../../assets/style/theme';
 
-// ── DROPDOWN STYLES ──────────────────────────────────────
-const dropdown = StyleSheet.create({
-  wrapper: { position: 'relative', zIndex: 99 },
+// ── DROPDOWN POPUP STYLES ─────────────────────────────────
+export const dropdown = StyleSheet.create({
+  wrapper: {
+    position: 'relative',
+    zIndex: 99,
+  },
   button: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#c8b97a',
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-    backgroundColor: 'transparent',
+    backgroundColor: '#ffffff',
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
-  buttonText: { fontSize: 13, color: '#444' },
-  arrow: { fontSize: 10, color: '#b5973a' },
+  buttonOpen: {
+    borderColor: colors.gold,
+  },
+  buttonText: {
+    fontSize: 13,
+    color: colors.textPrimary,
+    fontWeight: '600',
+  },
   menu: {
     position: 'absolute',
-    top: 38,
+    top: 48,
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     borderWidth: 1,
-    borderColor: '#e0d9c8',
-    borderRadius: 6,
+    borderColor: colors.border,
+    borderRadius: radius.md,
     zIndex: 999,
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
+    ...shadows.lg,
+    overflow: 'hidden',
   },
   option: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 11,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0ebe0',
+    borderBottomColor: colors.borderLight,
   },
-  optionText: { fontSize: 13, color: '#444' },
-  optionTextActive: { color: '#b5973a', fontWeight: '700' },
+  optionActive: {
+    backgroundColor: colors.goldSubtle,
+  },
+  optionText: {
+    fontSize: 13,
+    color: colors.textPrimary,
+    fontWeight: '500',
+  },
+  optionTextActive: {
+    color: colors.goldDark,
+    fontWeight: '700',
+  },
 });
 
 // ── MAIN STYLES ──────────────────────────────────────────
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f0e8',
+    backgroundColor: colors.bg, // #f5f0e8
   },
   pageHeader: {
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 12,
+    paddingHorizontal: 28,
+    paddingTop: 18,
+    paddingBottom: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0d9c8',
-    backgroundColor: '#f5f0e8',
+    borderBottomColor: colors.border,
+    backgroundColor: colors.card,
+    ...shadows.sm,
   },
   pageTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#3d3020',
+    fontWeight: '900',
+    color: colors.textPrimary,
+  },
+  pageSubtitle: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 2,
   },
   scrollContent: {
-    padding: 16,
-    paddingBottom: 40,
+    padding: 24,
+    paddingBottom: 60,
   },
   scrollContentLandscape: {
-    padding: 12,
+    padding: 24,
   },
 
-  // ── LAYOUT ───────────────────────────────────────────
+  // ── TABLET LANDSCAPE TWO-COLUMNS ───────────────────────
   twoCol: {
     flexDirection: 'row',
-    gap: 16,
+    gap: 20,
     alignItems: 'flex-start',
   },
   leftCol: {
-    width: 200,
+    width: 280,
+  },
+  leftColInner: {
     gap: 16,
   },
   rightCol: {
@@ -84,91 +113,120 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 12,
+    marginTop: 10,
     alignItems: 'flex-end',
   },
   colFlex1: { flex: 1 },
   colFlex2: { flex: 2 },
 
-  // ── PHOTO ────────────────────────────────────────────
+  // ── PHOTO BOX ─────────────────────────────────────────
   photoBox: {
-    backgroundColor: '#f0e8d0',
+    backgroundColor: '#f2ecdf',
     borderWidth: 1.5,
-    borderColor: '#c8b97a',
+    borderColor: colors.borderGold,
     borderStyle: 'dashed',
-    borderRadius: 8,
-    height: 160,
+    borderRadius: radius.lg,
+    paddingVertical: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
   },
-  photoIcon: { fontSize: 36, marginBottom: 8 },
-  photoLabel: { fontSize: 12, color: '#999' },
+  photoIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(181, 151, 58, 0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  photoTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    marginBottom: 2,
+  },
+  photoLabel: {
+    fontSize: 11,
+    color: colors.textSecondary,
+  },
 
-  // ── CARD ─────────────────────────────────────────────
+  // ── CARD ──────────────────────────────────────────────
   card: {
-    backgroundColor: '#faf7f0',
+    backgroundColor: colors.card,
     borderWidth: 1,
-    borderColor: '#e0d9c8',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
+    padding: 18,
+    marginBottom: 14,
+    ...shadows.sm,
   },
   cardTitle: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#3d3020',
+    fontWeight: '800',
+    color: colors.textPrimary,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0d9c8',
+    borderBottomColor: colors.borderLight,
     paddingBottom: 8,
-    marginBottom: 4,
+    marginBottom: 6,
   },
 
-  // ── FORM ─────────────────────────────────────────────
+  // ── INPUT CONTROLS ────────────────────────────────────
   label: {
     fontSize: 11,
-    color: '#888',
+    fontWeight: '700',
+    color: colors.textSecondary,
     marginBottom: 4,
-    marginTop: 8,
+    marginTop: 6,
   },
-  req: { color: '#e74c3c' },
+  req: {
+    color: colors.danger,
+  },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#c8b97a',
-    paddingVertical: 6,
-    paddingHorizontal: 4,
-    fontSize: 14,
-    color: '#333',
-    backgroundColor: 'transparent',
+    backgroundColor: '#ffffff',
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingVertical: 9,
+    paddingHorizontal: 12,
+    fontSize: 13,
+    color: colors.textPrimary,
   },
   inputMultiline: {
-    height: 56,
+    height: 64,
     textAlignVertical: 'top',
+    marginTop: 4,
   },
 
-  // ── GENDER ───────────────────────────────────────────
+  // ── GENDER SEGMENT ────────────────────────────────────
   genderRow: {
     flexDirection: 'row',
     gap: 8,
-    marginTop: 4,
+    marginTop: 2,
   },
   genderBtn: {
     flex: 1,
-    paddingVertical: 7,
-    borderWidth: 1,
-    borderColor: '#c8b97a',
-    borderRadius: 4,
+    paddingVertical: 9,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: radius.md,
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: '#ffffff',
   },
   genderBtnActive: {
-    backgroundColor: '#b5973a',
-    borderColor: '#b5973a',
+    backgroundColor: colors.gold,
+    borderColor: colors.gold,
   },
-  genderText: { fontSize: 12, color: '#666', fontWeight: '600' },
-  genderTextActive: { color: '#fff' },
+  genderText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    fontWeight: '600',
+  },
+  genderTextActive: {
+    color: '#181614',
+    fontWeight: '800',
+  },
 
-  // ── CHIPS ────────────────────────────────────────────
+  // ── CHIPS ─────────────────────────────────────────────
   chipGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -178,63 +236,45 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: 12,
     paddingVertical: 7,
-    borderRadius: 20,
+    borderRadius: radius.pill,
     borderWidth: 1,
-    borderColor: '#c8b97a',
-    backgroundColor: 'transparent',
+    borderColor: colors.border,
+    backgroundColor: '#ede6d8',
   },
   chipActive: {
-    backgroundColor: '#b5973a',
-    borderColor: '#b5973a',
+    backgroundColor: colors.gold,
+    borderColor: colors.gold,
   },
-  chipText: { fontSize: 12, color: '#666', fontWeight: '600' },
-  chipTextActive: { color: '#fff' },
-
-  // ── LINK BUTTON ──────────────────────────────────────
-  linkButton: {
-    backgroundColor: '#e0d9c8',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 4,
-    alignSelf: 'flex-end',
-    marginTop: 20,
-  },
-  linkButtonText: {
-    fontSize: 12,
-    color: '#5a4a20',
+  chipText: {
+    fontSize: 11,
+    color: colors.textSecondary,
     fontWeight: '600',
   },
+  chipTextActive: {
+    color: '#181614',
+    fontWeight: '800',
+  },
 
-  // ── SUBMIT ───────────────────────────────────────────
+  // ── SUBMIT CTA ────────────────────────────────────────
   submitButton: {
-    backgroundColor: '#b5973a',
-    borderRadius: 8,
+    backgroundColor: colors.gold,
+    borderRadius: radius.md,
     paddingVertical: 14,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 16,
-    marginBottom: 32,
-    elevation: 2,
+    justifyContent: 'center',
+    marginTop: 10,
+    marginBottom: 40,
+    gap: 8,
+    ...shadows.gold,
+  },
+  submitButtonDisabled: {
+    opacity: 0.7,
   },
   submitText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#181614',
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: 0.4,
   },
-
-  burger: {
-  position: 'absolute',
-  top: 16,
-  left: 16,
-  zIndex: 10,
-  gap: 5,
-  padding: 8,
-},
-burgerLine: {
-  height: 2,
-  width: 22,
-  backgroundColor: '#3d3020',
-  borderRadius: 2,
-},
 });
-
-export { styles, dropdown };

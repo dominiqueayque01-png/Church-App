@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from '@nozbe/watermelondb';
 
 export const mySchema = appSchema({
-  version: 1,
+  version: 2,
   tables: [
     tableSchema({
       name: 'ministries',
@@ -20,24 +20,28 @@ export const mySchema = appSchema({
         { name: 'created_at', type: 'number' },
       ],
     }),
-    tableSchema({
-      name: 'members',
-      columns: [
-        { name: 'first_name', type: 'string' },
-        { name: 'last_name', type: 'string' },
-        { name: 'birthday', type: 'string', isOptional: true },
-        { name: 'phone', type: 'string', isOptional: true },
-        { name: 'email', type: 'string', isOptional: true },
-        { name: 'address', type: 'string', isOptional: true },
-        { name: 'status', type: 'string' },
-        { name: 'ministry_id', type: 'string', isOptional: true },
-        { name: 'small_group_id', type: 'string', isOptional: true },
-        { name: 'how_they_heard', type: 'string', isOptional: true },
-        { name: 'joined_date', type: 'string', isOptional: true },
-        { name: 'created_at', type: 'number' },
-        { name: 'synced_at', type: 'number', isOptional: true },
-      ],
-    }),
+tableSchema({
+  name: 'members',
+  columns: [
+    { name: 'first_name', type: 'string' },
+    { name: 'middle_initial', type: 'string', isOptional: true },
+    { name: 'last_name', type: 'string' },
+    { name: 'birthday', type: 'string', isOptional: true },
+    { name: 'age', type: 'string', isOptional: true },
+    { name: 'gender', type: 'string', isOptional: true },
+    { name: 'phone', type: 'string', isOptional: true },
+    { name: 'email', type: 'string', isOptional: true },
+    { name: 'address', type: 'string', isOptional: true },
+    { name: 'status', type: 'string' },
+    { name: 'ministry', type: 'string', isOptional: true },
+    { name: 'ministry_id', type: 'string', isOptional: true },
+    { name: 'small_group_id', type: 'string', isOptional: true },
+    { name: 'how_they_heard', type: 'string', isOptional: true },
+    { name: 'joined_date', type: 'string', isOptional: true },
+    { name: 'created_at', type: 'number' },
+    { name: 'synced_at', type: 'number', isOptional: true },
+  ],
+}),
     tableSchema({
       name: 'emergency_contacts',
       columns: [

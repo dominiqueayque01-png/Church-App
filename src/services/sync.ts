@@ -28,13 +28,18 @@ export async function searchMembers(searchText: string): Promise<Member[]> {
 // ─── CREATE NEW MEMBER (saves locally first) ─────────────
 export async function createMember(data: {
   firstName: string;
+  middleInitial?: string;
   lastName: string;
-  phone: string;
-  email: string;
-  address: string;
-  birthday: string;
+  birthday?: string;
+  age?: string;
+  gender?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
   status: string;
-  howTheyHeard: string;
+  ministry?: string;
+  joinedDate?: string;
+  howTheyHeard?: string;
 }): Promise<Member> {
   const membersCollection = database.get<Member>('members');
   let newMember!: Member;
@@ -42,19 +47,22 @@ export async function createMember(data: {
   await database.write(async () => {
     newMember = await membersCollection.create(member => {
       member.firstName = data.firstName;
+      member.middleInitial = data.middleInitial ?? '';
       member.lastName = data.lastName;
-      member.phone = data.phone;
-      member.email = data.email;
-      member.address = data.address;
-      member.birthday = data.birthday;
+      member.birthday = data.birthday ?? '';
+      member.age = data.age ?? '';
+      member.gender = data.gender ?? '';
+      member.phone = data.phone ?? '';
+      member.email = data.email ?? '';
+      member.address = data.address ?? '';
       member.status = data.status;
-      member.howTheyHeard = data.howTheyHeard;
+      member.ministry = data.ministry ?? '';
+      member.joinedDate = data.joinedDate ?? new Date().toISOString().split('T')[0];
+      member.howTheyHeard = data.howTheyHeard ?? '';
     });
   });
 
-  // Try to sync to Supabase immediately if online
   syncMemberToSupabase(newMember);
-
   return newMember;
 }
 
@@ -86,14 +94,18 @@ async function syncMemberToSupabase(member: Member) {
     const { error } = await supabase.from('members').insert({
       id: member.id,
       first_name: member.firstName,
+      middle_initial: member.middleInitial || null,
       last_name: member.lastName,
-      phone: member.phone,
-      email: member.email,
-      address: member.address,
       birthday: member.birthday || null,
+      age: member.age || null,
+      gender: member.gender || null,
+      phone: member.phone || null,
+      email: member.email || null,
+      address: member.address || null,
       status: member.status,
-      how_they_heard: member.howTheyHeard,
-      joined_date: new Date().toISOString().split('T')[0],
+      ministry: member.ministry || null,
+      how_they_heard: member.howTheyHeard || null,
+      joined_date: member.joinedDate || new Date().toISOString().split('T')[0],
     });
     if (error) console.log('Sync error (will retry later):', error.message);
     else console.log('Member synced to Supabase ✅');

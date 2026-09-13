@@ -1,355 +1,400 @@
 import { StyleSheet } from 'react-native';
+import { colors, radius, shadows, spacing } from '../../assets/style/theme';
 
-export const FULL_WIDTH = 260;
-export const MINI_WIDTH = 52;
+export const FULL_WIDTH = 270;
+export const MINI_WIDTH = 58;
 export const PANEL_WIDTH = FULL_WIDTH - MINI_WIDTH;
 
 export const styles = StyleSheet.create({
-    wrapper: {
+  wrapper: {
     position: 'relative',
     zIndex: 99,
   },
 
-  // ── MINI SIDEBAR (always visible) ──────────────────
+  // ── MINI SIDEBAR (always visible strip) ───────────────
   miniSidebar: {
     width: MINI_WIDTH,
-    backgroundColor: '#2c2c2c',
+    backgroundColor: colors.sidebarBg, // #181614
+    borderRightWidth: 1,
+    borderRightColor: colors.borderDark,
     paddingTop: 16,
     zIndex: 100,
-    elevation: 17, // must beat expandedPanel's elevation on Android or icons can get painted underneath
+    elevation: 20,
     height: '100%',
+    alignItems: 'center',
   },
   burgerButton: {
-    gap: 5,
+    gap: 4,
     padding: 10,
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
+    borderRadius: radius.md,
   },
   toggleLine: {
     height: 2,
-    width: 22,
-    backgroundColor: '#b5973a',
+    width: 20,
+    backgroundColor: colors.gold,
     borderRadius: 2,
   },
+  miniLogoWrap: {
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  miniCrest: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(181, 151, 58, 0.12)',
+    borderWidth: 1,
+    borderColor: colors.borderGold,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   miniNav: {
-    paddingTop: 8,
+    width: '100%',
+    paddingTop: 4,
+    gap: 6,
   },
   miniItem: {
+    width: '100%',
     alignItems: 'center',
     paddingVertical: 14,
     borderLeftWidth: 3,
     borderLeftColor: 'transparent',
   },
   miniItemActive: {
-    backgroundColor: 'rgba(181,151,58,0.15)',
-    borderLeftColor: '#b5973a',
-  },
-  miniIcon: {
-    fontSize: 18,
-    color: '#b5973a',
-  },
-
-  // ── EXPANDED PANEL (slides out) ─────────────────────
-  expandedPanel: {
-    position: 'absolute',
-    top: 0,
-    left: MINI_WIDTH,
-    width: PANEL_WIDTH,
-    height: '100%',
-    backgroundColor: '#2c2c2c',
-    zIndex: 99,
-    paddingTop: 16,
-    elevation: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    overflow: 'hidden',
-  },
-  churchInfo: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  churchName: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 4,
-  },
-  churchSubtitle: {
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.5)',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    marginBottom: 8,
-  },
-  expandedNav: {
-    paddingTop: 8,
-  },
-  expandedItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 12,
-    borderLeftWidth: 3,
-    borderLeftColor: 'transparent',
-  },
-  expandedItemActive: {
-    backgroundColor: 'rgba(181,151,58,0.15)',
-    borderLeftColor: '#b5973a',
-  },
-  expandedIcon: {
-    fontSize: 18,
-    color: '#b5973a',
-  },
-  expandedLabel: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.85)',
-    fontWeight: '500',
-  },
-  bottomStatus: {
-  // remove: position: 'absolute', bottom: 24, left: 16
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: 8,
-  paddingHorizontal: 16,
-  paddingBottom: 20,
-},
-  onlineDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#27ae60',
-  },
-  onlineText: {
-    fontSize: 11,
-    color: 'rgba(255,255,255,0.5)',
-  },
-  userSection: {
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  padding: 16,
-},
-userDivider: {
-  height: 1,
-  backgroundColor: 'rgba(255,255,255,0.1)',
-  marginBottom: 12,
-},
-userInfo: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: 10,
-  marginBottom: 10,
-},
-userAvatar: {
-  width: 34,
-  height: 34,
-  borderRadius: 17,
-  backgroundColor: '#b5973a',
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-userAvatarText: {
-  color: '#ffffff',
-  fontWeight: 'bold',
-  fontSize: 14,
-},
-userDetails: {
-  flex: 1,
-},
-userName: {
-  fontSize: 12,
-  fontWeight: '600',
-  color: '#ffffff',
-},
-userRole: {
-  fontSize: 10,
-  color: 'rgba(255,255,255,0.5)',
-  textTransform: 'uppercase',
-},
-
-
-expandedAccount: {
-    paddingHorizontal: 12,
-    gap: 10,
-  },
-
-   profileCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 10,
-    padding: 10,
-    gap: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#b5973a',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexShrink: 0,
-  },
-  avatarText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-    fontSize: 15,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#ffffff',
-    marginBottom: 2,
-  },
-  profileUsername: {
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.4)',
-    marginBottom: 5,
-  },
-  roleBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  roleBadgeText: {
-    color: '#ffffff',
-    fontSize: 9,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: 'rgba(231,76,60,0.15)',
-    borderRadius: 8,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(231,76,60,0.25)',
-  },
-  logoutIcon: {
-    fontSize: 14,
-    color: '#e74c3c',
-  },
-  logoutText: {
-    fontSize: 13,
-    color: '#e74c3c',
-    fontWeight: '600',
-  },
-
-  accountSection: {
-flex: 1,                 // fills whatever space is left below the nav items
-  justifyContent: 'flex-end', // pushes its content (the card) to the bottom
-  paddingBottom: 12,
-  },
-  accountDivider: {
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    marginBottom: 12,
+    backgroundColor: colors.goldSubtle,
+    borderLeftColor: colors.gold,
   },
   collapsedAccount: {
     alignItems: 'center',
-    paddingVertical: 4,
+    paddingVertical: 8,
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 20,
   },
   miniAvatar: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: '#b5973a',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: colors.borderGold,
+  },
+  miniAvatarText: {
+    fontWeight: '700',
+    fontSize: 13,
+  },
+
+  // ── EXPANDED SANCTUARY PANEL ──────────────────────────
+  expandedPanel: {
+    position: 'absolute',
+    top: 0,
+    left: MINI_WIDTH,
+    width: PANEL_WIDTH,
+    height: '100%',
+    backgroundColor: colors.sidebarBg,
+    borderRightWidth: 1,
+    borderRightColor: colors.borderDark,
+    zIndex: 99,
+    paddingTop: 18,
+    elevation: 18,
+    shadowColor: '#000000',
+    shadowOffset: { width: 6, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    overflow: 'hidden',
+  },
+  churchInfo: {
+    paddingHorizontal: 18,
+    paddingBottom: 14,
+  },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  brandCrest: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(181, 151, 58, 0.14)',
+    borderWidth: 1,
+    borderColor: colors.borderGoldStrong,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  miniAvatarText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
+  brandTextWrap: {
+    flex: 1,
+  },
+  churchName: {
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: 1.8,
+    color: colors.goldLight,
+  },
+  churchSubtitle: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 0.4,
+    color: colors.sidebarTextMuted,
+    marginTop: 1,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.borderDark,
+    marginHorizontal: 16,
+    marginVertical: 10,
+  },
+
+  // Navigation List
+  expandedNav: {
+    paddingTop: 6,
+    paddingHorizontal: 10,
+    gap: 4,
+  },
+  navSectionLabel: {
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1.4,
+    color: 'rgba(255, 255, 255, 0.32)',
+    paddingHorizontal: 10,
+    marginBottom: 6,
+  },
+  expandedItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: radius.md,
+    gap: 12,
+    position: 'relative',
+  },
+  expandedItemActive: {
+    backgroundColor: 'rgba(181, 151, 58, 0.14)',
+  },
+  activePillIndicator: {
+    position: 'absolute',
+    left: 0,
+    top: 8,
+    bottom: 8,
+    width: 3.5,
+    borderRadius: 2,
+    backgroundColor: colors.gold,
+  },
+  expandedLabel: {
     fontSize: 13,
+    color: colors.sidebarTextMuted,
+    fontWeight: '500',
+  },
+  expandedLabelActive: {
+    color: colors.goldLight,
+    fontWeight: '700',
+  },
+
+  // ── Bottom Section ──
+  bottomSection: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: 16,
+  },
+  profileCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.sidebarElevated,
+    borderRadius: radius.lg,
+    padding: 12,
+    marginHorizontal: 12,
+    marginBottom: 10,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: colors.borderDark,
+  },
+  avatar: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.borderGold,
+    flexShrink: 0,
+  },
+  avatarText: {
+    fontWeight: '700',
+    fontSize: 14,
+  },
+  profileInfo: {
+    flex: 1,
+  },
+  profileName: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textInverse,
+    marginBottom: 1,
+  },
+  profileUsername: {
+    fontSize: 10,
+    color: colors.sidebarTextMuted,
+    marginBottom: 4,
+  },
+  roleBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: radius.xs,
+    gap: 4,
+  },
+  roleBadgeUsher: {
+    backgroundColor: 'rgba(39, 174, 96, 0.16)',
+    borderWidth: 1,
+    borderColor: 'rgba(39, 174, 96, 0.3)',
+  },
+  roleBadgeAdmin: {
+    backgroundColor: 'rgba(181, 151, 58, 0.18)',
+    borderWidth: 1,
+    borderColor: colors.borderGold,
+  },
+  roleBadgeText: {
+    fontSize: 9,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
+  roleTextUsher: {
+    color: '#38d37c',
+  },
+  roleTextAdmin: {
+    color: colors.goldLight,
+  },
+
+  // Logout Button
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: colors.dangerBg,
+    borderRadius: radius.md,
+    paddingVertical: 10,
+    marginHorizontal: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.dangerBorder,
+  },
+  logoutText: {
+    fontSize: 12,
+    color: colors.danger,
+    fontWeight: '700',
+  },
+
+  // Online Status
+  bottomStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+  },
+  onlinePulseWrap: {
+    width: 12,
+    height: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  onlinePulse: {
+    position: 'absolute',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: 'rgba(39, 174, 96, 0.25)',
+  },
+  onlineDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.success,
+  },
+  onlineText: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: colors.sidebarTextMuted,
   },
 
   // ── SIGN OUT MODAL ───────────────────────────────────
   logoutModalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: colors.overlayStrong,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
   },
   logoutModalCard: {
     width: '100%',
-    maxWidth: 320,
-    backgroundColor: '#2c2c2c',
-    borderRadius: 16,
+    maxWidth: 340,
+    backgroundColor: colors.sidebarElevated,
+    borderRadius: radius.xl,
     padding: 24,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: colors.borderDark,
+    ...shadows.dark,
   },
   logoutModalIconWrap: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: 'rgba(231,76,60,0.15)',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.dangerBg,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 14,
-  },
-  logoutModalIcon: {
-    fontSize: 22,
-    color: '#e74c3c',
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: colors.dangerBorder,
   },
   logoutModalTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.textInverse,
     marginBottom: 8,
   },
   logoutModalMessage: {
     fontSize: 13,
-    color: 'rgba(255,255,255,0.6)',
+    color: colors.sidebarTextMuted,
     textAlign: 'center',
-    lineHeight: 19,
-    marginBottom: 22,
+    lineHeight: 20,
+    marginBottom: 24,
   },
   logoutModalActions: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 12,
     width: '100%',
   },
   logoutModalCancel: {
     flex: 1,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: radius.md,
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: colors.borderDark,
   },
   logoutModalCancelText: {
-    color: 'rgba(255,255,255,0.85)',
+    color: colors.sidebarText,
     fontSize: 13,
     fontWeight: '600',
   },
   logoutModalConfirm: {
     flex: 1,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: radius.md,
     alignItems: 'center',
-    backgroundColor: '#e74c3c',
+    backgroundColor: colors.danger,
   },
   logoutModalConfirmText: {
     color: '#ffffff',

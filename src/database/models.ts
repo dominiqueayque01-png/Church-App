@@ -25,12 +25,16 @@ export class Member extends Model {
   static table = 'members';
 
   @text('first_name') firstName!: string;
+  @text('middle_initial') middleInitial!: string;
   @text('last_name') lastName!: string;
   @text('birthday') birthday!: string;
+  @text('age') age!: string;
+  @text('gender') gender!: string;
   @text('phone') phone!: string;
   @text('email') email!: string;
   @text('address') address!: string;
   @text('status') status!: string;
+  @text('ministry') ministry!: string;
   @field('ministry_id') ministryId!: string;
   @field('small_group_id') smallGroupId!: string;
   @text('how_they_heard') howTheyHeard!: string;

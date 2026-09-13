@@ -1,93 +1,192 @@
 import { StyleSheet } from 'react-native';
+import { colors, radius, shadows, spacing } from '../../assets/style/theme';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: 28,
     paddingTop: 24,
-    backgroundColor: '#f5f5f0',
+    backgroundColor: colors.bg, // #f5f0e8
   },
-  dateText: {
-    fontSize: 13,
-    color: '#888',
-    textAlign: 'center',
-    marginBottom: 8,
+  header: {
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+  dateChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ede6d8',
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: radius.pill,
+    gap: 6,
+    marginBottom: 10,
+  },
+  dateChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.textSecondary,
+    letterSpacing: 0.4,
   },
   title: {
     fontSize: 26,
-    fontWeight: 'bold',
-    color: '#b5973a',
+    fontWeight: '900',
+    color: colors.textPrimary,
+    letterSpacing: 0.5,
+    marginBottom: 6,
+  },
+  subtitle: {
+    fontSize: 13,
+    color: colors.textSecondary,
     textAlign: 'center',
-    marginBottom: 24,
   },
   cardsContainer: {
-    gap: 16,
-    paddingBottom: 32,
+    gap: 18,
+    paddingBottom: 40,
   },
   cardsContainerLandscape: {
     flexDirection: 'row',
+    alignItems: 'stretch',
   },
+
+  // ── SERVICE CARD ──────────────────────────────────────
   serviceCard: {
-    borderRadius: 8,
-    padding: 20,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    backgroundColor: colors.card, // #faf7f0
+    borderRadius: radius.xl,
+    padding: 24,
+    borderWidth: 1.5,
+    borderColor: colors.border,
     justifyContent: 'space-between',
-    minHeight: 140,
+    minHeight: 180,
+    ...shadows.md,
   },
-  serviceCardLandscape: { flex: 1 },
-  cardTop: { marginBottom: 16 },
+  serviceCardActive: {
+    borderColor: colors.borderGold,
+    backgroundColor: '#ffffff',
+  },
+  serviceCardLandscape: {
+    flex: 1,
+  },
+  cardHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+  statusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: radius.pill,
+    gap: 6,
+  },
+  statusPillActive: {
+    backgroundColor: colors.successBg,
+    borderWidth: 1,
+    borderColor: colors.successBorder,
+  },
+  statusPillUpcoming: {
+    backgroundColor: 'rgba(181, 151, 58, 0.12)',
+    borderWidth: 1,
+    borderColor: colors.borderGold,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  statusDotActive: {
+    backgroundColor: colors.success,
+  },
+  statusDotUpcoming: {
+    backgroundColor: colors.gold,
+  },
+  statusPillText: {
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  statusTextActive: {
+    color: colors.success,
+  },
+  statusTextUpcoming: {
+    color: colors.goldDark,
+  },
   cardDay: {
     fontSize: 11,
-    color: 'rgba(255,255,255,0.75)',
-    fontWeight: '600',
-    marginBottom: 6,
+    fontWeight: '800',
+    color: colors.textMuted,
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
+  },
+
+  cardBody: {
+    marginBottom: 20,
   },
   cardName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#ffffff',
+    fontSize: 22,
+    fontWeight: '800',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
-  cardTime: { fontSize: 13, color: 'rgba(255,255,255,0.8)' },
-  cardBottom: {
+  cardRoom: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginBottom: 14,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 14,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0ebe0',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: radius.sm,
+    gap: 6,
+  },
+  metaText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  metaTextHighlight: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.goldDark,
+  },
+
+  // Card Footer
+  cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.2)',
-    paddingTop: 12,
-  },
-  checkedInText: {
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.75)',
-    fontWeight: '500',
+    borderTopColor: colors.borderLight,
+    paddingTop: 14,
   },
   tapText: {
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.75)',
-    fontWeight: '500',
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.textPrimary,
   },
-burger: {
-  position: 'absolute',
-  top: 16,
-  left: 16,
-  zIndex: 10,
-  gap: 5,
-  padding: 8,
-},
-burgerLine: {
-  height: 2,
-  width: 22,
-  backgroundColor: '#3d3020',
-  borderRadius: 2,
-},
-  
+  actionArrow: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(181, 151, 58, 0.12)',
+    borderWidth: 1,
+    borderColor: colors.borderGold,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default styles;

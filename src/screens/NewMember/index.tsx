@@ -4,19 +4,46 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
   Alert,
   useWindowDimensions,
+  ActivityIndicator,
 } from 'react-native';
+import {
+  Camera,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Calendar,
+  Users,
+  ChevronDown,
+  ChevronUp,
+  UserPlus,
+  CheckCircle2,
+  Sparkles,
+} from '../../components/common/Icons';
+
+import { createMember } from '../../services/sync';
+import { styles, dropdown } from './index.styles';
+import { colors } from '../../assets/style/theme';
 
 const STATUS_OPTIONS = ['Visitor', 'New Member', 'Member', 'Leader'];
-const MINISTRY_OPTIONS = ['Unassigned', 'Youth Ministry', 'Worship Team', 'Ushers', 'Media Team', 'Children Ministry'];
-const GENDER_OPTIONS = ['Male', 'Female'];
-const RELATIONSHIP_OPTIONS = ['Spouse', 'Parent', 'Child', 'Sibling', 'Other'];
-const HOW_HEARD_OPTIONS = ['Friend / Family', 'Social Media', 'Walk-in', 'Flyer / Poster', 'Other'];
-
-import { styles, dropdown } from './index.styles';
+const MINISTRY_OPTIONS = [
+  'Unassigned',
+  'Youth Ministry',
+  'Worship Team',
+  'Ushers',
+  'Media Team',
+  'Children Ministry',
+];
+const HOW_HEARD_OPTIONS = [
+  'Friend / Family',
+  'Social Media',
+  'Walk-in',
+  'Flyer / Poster',
+  'Other',
+];
 
 type FormData = {
   firstName: string;
@@ -46,22 +73,40 @@ function Dropdown({ label, value, options, onSelect }: DropdownProps) {
   return (
     <View style={dropdown.wrapper}>
       <TouchableOpacity
-        style={dropdown.button}
-        onPress={() => setOpen(!open)}>
+        style={[dropdown.button, open && dropdown.buttonOpen]}
+        onPress={() => setOpen(!open)}
+        activeOpacity={0.8}>
         <Text style={dropdown.buttonText}>{value || label}</Text>
-        <Text style={dropdown.arrow}>{open ? '▲' : '▼'}</Text>
+        {open ? (
+          <ChevronUp size={16} color={colors.gold} strokeWidth={2} />
+        ) : (
+          <ChevronDown size={16} color={colors.textMuted} strokeWidth={2} />
+        )}
       </TouchableOpacity>
       {open && (
         <View style={dropdown.menu}>
           {options.map(opt => (
             <TouchableOpacity
               key={opt}
-              style={dropdown.option}
-              onPress={() => { onSelect(opt); setOpen(false); }}>
-              <Text style={[
-                dropdown.optionText,
-                value === opt && dropdown.optionTextActive,
-              ]}>{opt}</Text>
+              style={[
+                dropdown.option,
+                value === opt && dropdown.optionActive,
+              ]}
+              onPress={() => {
+                onSelect(opt);
+                setOpen(false);
+              }}
+              activeOpacity={0.75}>
+              <Text
+                style={[
+                  dropdown.optionText,
+                  value === opt && dropdown.optionTextActive,
+                ]}>
+                {opt}
+              </Text>
+              {value === opt && (
+                <CheckCircle2 size={14} color={colors.gold} strokeWidth={2.4} />
+              )}
             </TouchableOpacity>
           ))}
         </View>
@@ -70,14 +115,10 @@ function Dropdown({ label, value, options, onSelect }: DropdownProps) {
   );
 }
 
-type Props = {
- 
-  onOpenSidebar?: () => void;
-};
-
-export default function EventSelectScreen({  onOpenSidebar }: Props) {
+export default function NewMemberScreen() {
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
+  const [submitting, setSubmitting] = useState(false);
 
   const [form, setForm] = useState<FormData>({
     firstName: '',
@@ -85,7 +126,7 @@ export default function EventSelectScreen({  onOpenSidebar }: Props) {
     lastName: '',
     birthdate: '',
     age: '',
-    gender: '',
+    gender: 'Male',
     phone: '',
     email: '',
     address: '',
@@ -99,187 +140,192 @@ export default function EventSelectScreen({  onOpenSidebar }: Props) {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.firstName.trim() || !form.lastName.trim()) {
-      Alert.alert('Required', 'Please enter at least First and Last name.');
+      Alert.alert('Required Information', 'Please provide at least First and Last name.');
       return;
     }
-    Alert.alert(
-      '✅ Member Registered!',
-      `${form.firstName} ${form.lastName} has been successfully registered.`,
-      [{ text: 'OK', onPress: () => setForm({
-        firstName: '', middleInitial: '', lastName: '',
-        birthdate: '', age: '', gender: '',
-        phone: '', email: '', address: '',
-        status: 'Member', ministry: 'Unassigned',
-        dateJoined: '', howTheyHeard: '',
-      })}],
-    );
+
+    setSubmitting(true);
+
+    try {
+      await createMember({
+        firstName: form.firstName,
+        middleInitial: form.middleInitial,
+        lastName: form.lastName,
+        birthday: form.birthdate,
+        age: form.age,
+        gender: form.gender,
+        phone: form.phone,
+        email: form.email,
+        address: form.address,
+        status: form.status,
+        ministry: form.ministry,
+        joinedDate: form.dateJoined,
+        howTheyHeard: form.howTheyHeard,
+      });
+
+      setSubmitting(false);
+
+      Alert.alert(
+        'Member Registered',
+        `${form.firstName} ${form.lastName} has been successfully registered to the sanctuary directory.`,
+        [
+          {
+            text: 'Register Another',
+            onPress: () =>
+              setForm({
+                firstName: '',
+                middleInitial: '',
+                lastName: '',
+                birthdate: '',
+                age: '',
+                gender: 'Male',
+                phone: '',
+                email: '',
+                address: '',
+                status: 'Member',
+                ministry: 'Unassigned',
+                dateJoined: '',
+                howTheyHeard: '',
+              }),
+          },
+        ],
+      );
+    } catch (e) {
+      console.log(e);
+      setSubmitting(false);
+      Alert.alert('Registration Error', 'Could not register member. Please check local database connection.');
+    }
   };
 
-  return (
-    <View style={styles.container}>
-            {/* Page Title with Burger */}
-      <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Member's Registration Form</Text>
+  const renderPhotoAndSource = () => (
+    <View style={styles.leftColInner}>
+      {/* Photo Capture Area */}
+      <TouchableOpacity style={styles.photoBox} activeOpacity={0.8}>
+        <View style={styles.photoIconWrap}>
+          <Camera size={26} color={colors.gold} strokeWidth={2} />
+        </View>
+        <Text style={styles.photoTitle}>Member Portrait</Text>
+        <Text style={styles.photoLabel}>Tap to take or select photo</Text>
+      </TouchableOpacity>
+
+      {/* Outreach Source */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>How Did They Hear About Us?</Text>
+        <View style={styles.chipGrid}>
+          {HOW_HEARD_OPTIONS.map(opt => (
+            <TouchableOpacity
+              key={opt}
+              style={[
+                styles.chip,
+                form.howTheyHeard === opt && styles.chipActive,
+              ]}
+              onPress={() => updateField('howTheyHeard', opt)}
+              activeOpacity={0.75}>
+              <Text
+                style={[
+                  styles.chipText,
+                  form.howTheyHeard === opt && styles.chipTextActive,
+                ]}>
+                {opt}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
-
-      <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          isLandscape && styles.scrollContentLandscape,
-        ]}
-        showsVerticalScrollIndicator={false}>
-
-        {isLandscape ? (
-          // ── LANDSCAPE: Two columns ──
-          <View style={styles.twoCol}>
-            {/* Left Column */}
-            <View style={styles.leftCol}>
-              {/* Photo */}
-              <TouchableOpacity style={styles.photoBox}>
-                <Text style={styles.photoIcon}>📷</Text>
-                <Text style={styles.photoLabel}>Tap to capture photo.</Text>
-              </TouchableOpacity>
-
-              {/* How They Heard */}
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>How Did They Hear About Us?</Text>
-                <View style={styles.chipGrid}>
-                  {HOW_HEARD_OPTIONS.map(opt => (
-                    <TouchableOpacity
-                      key={opt}
-                      style={[styles.chip, form.howTheyHeard === opt && styles.chipActive]}
-                      onPress={() => updateField('howTheyHeard', opt)}>
-                      <Text style={[styles.chipText, form.howTheyHeard === opt && styles.chipTextActive]}>
-                        {opt}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </View>
-
-            {/* Right Column */}
-            <ScrollView style={styles.rightCol} showsVerticalScrollIndicator={false}>
-              {renderFormSections(form, updateField)}
-              <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                <Text style={styles.submitText}>Register Member</Text>
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
-        ) : (
-          // ── PORTRAIT: Single column ──
-          <View>
-            {/* Photo */}
-            <TouchableOpacity style={styles.photoBox}>
-              <Text style={styles.photoIcon}>📷</Text>
-              <Text style={styles.photoLabel}>Tap to capture photo.</Text>
-            </TouchableOpacity>
-
-            {renderFormSections(form, updateField)}
-
-            {/* How They Heard */}
-            <View style={styles.card}>
-              <Text style={styles.cardTitle}>How Did They Hear About Us?</Text>
-              <View style={styles.chipGrid}>
-                {HOW_HEARD_OPTIONS.map(opt => (
-                  <TouchableOpacity
-                    key={opt}
-                    style={[styles.chip, form.howTheyHeard === opt && styles.chipActive]}
-                    onPress={() => updateField('howTheyHeard', opt)}>
-                    <Text style={[styles.chipText, form.howTheyHeard === opt && styles.chipTextActive]}>
-                      {opt}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-              <Text style={styles.submitText}>Register Member</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </ScrollView>
     </View>
   );
-}
 
-function renderFormSections(
-  form: FormData,
-  updateField: (field: keyof FormData, value: string) => void,
-) {
-  return (
+  const renderFormFields = () => (
     <>
-
-      {/* Basic Information */}
+      {/* Card 1: Personal Details */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Basic Information</Text>
+        <Text style={styles.cardTitle}>Personal Information</Text>
 
-        {/* Name Row */}
+        {/* First, MI, Last */}
         <View style={styles.row}>
           <View style={styles.colFlex2}>
-            <Text style={styles.label}>First Name <Text style={styles.req}>*</Text></Text>
+            <Text style={styles.label}>
+              First Name <Text style={styles.req}>*</Text>
+            </Text>
             <TextInput
               style={styles.input}
-              placeholder="First Name"
+              placeholder="e.g. John"
+              placeholderTextColor={colors.textMuted}
               value={form.firstName}
               onChangeText={v => updateField('firstName', v)}
             />
           </View>
+
           <View style={styles.colFlex1}>
-            <Text style={styles.label}>Middle Initial</Text>
+            <Text style={styles.label}>M.I.</Text>
             <TextInput
               style={styles.input}
-              placeholder="M.I."
+              placeholder="A."
+              placeholderTextColor={colors.textMuted}
               value={form.middleInitial}
               onChangeText={v => updateField('middleInitial', v)}
               maxLength={2}
             />
           </View>
+
           <View style={styles.colFlex2}>
-            <Text style={styles.label}>Last Name <Text style={styles.req}>*</Text></Text>
+            <Text style={styles.label}>
+              Last Name <Text style={styles.req}>*</Text>
+            </Text>
             <TextInput
               style={styles.input}
-              placeholder="Last Name"
+              placeholder="e.g. Santos"
+              placeholderTextColor={colors.textMuted}
               value={form.lastName}
               onChangeText={v => updateField('lastName', v)}
             />
           </View>
         </View>
 
-        {/* Birthdate / Age / Gender Row */}
+        {/* Birthdate, Age, Gender */}
         <View style={styles.row}>
           <View style={styles.colFlex2}>
             <Text style={styles.label}>Birthdate</Text>
             <TextInput
               style={styles.input}
               placeholder="MM / DD / YYYY"
+              placeholderTextColor={colors.textMuted}
               value={form.birthdate}
               onChangeText={v => updateField('birthdate', v)}
-              keyboardType="numeric"
             />
           </View>
+
           <View style={styles.colFlex1}>
             <Text style={styles.label}>Age</Text>
             <TextInput
               style={styles.input}
               placeholder="Age"
+              placeholderTextColor={colors.textMuted}
               value={form.age}
               onChangeText={v => updateField('age', v)}
               keyboardType="numeric"
             />
           </View>
+
           <View style={styles.colFlex2}>
             <Text style={styles.label}>Gender</Text>
             <View style={styles.genderRow}>
               {['Male', 'Female'].map(g => (
                 <TouchableOpacity
                   key={g}
-                  style={[styles.genderBtn, form.gender === g && styles.genderBtnActive]}
-                  onPress={() => updateField('gender', g)}>
-                  <Text style={[styles.genderText, form.gender === g && styles.genderTextActive]}>
+                  style={[
+                    styles.genderBtn,
+                    form.gender === g && styles.genderBtnActive,
+                  ]}
+                  onPress={() => updateField('gender', g)}
+                  activeOpacity={0.8}>
+                  <Text
+                    style={[
+                      styles.genderText,
+                      form.gender === g && styles.genderTextActive,
+                    ]}>
                     {g}
                   </Text>
                 </TouchableOpacity>
@@ -289,25 +335,29 @@ function renderFormSections(
         </View>
       </View>
 
-      {/* Contact & Address */}
+      {/* Card 2: Contact & Residence */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Contact & Address</Text>
+        <Text style={styles.cardTitle}>Contact & Residence</Text>
+
         <View style={styles.row}>
           <View style={styles.colFlex1}>
-            <Text style={styles.label}>Mobile Number</Text>
+            <Text style={styles.label}>Mobile Phone Number</Text>
             <TextInput
               style={styles.input}
               placeholder="09XX XXX XXXX"
+              placeholderTextColor={colors.textMuted}
               value={form.phone}
               onChangeText={v => updateField('phone', v)}
               keyboardType="phone-pad"
             />
           </View>
+
           <View style={styles.colFlex1}>
             <Text style={styles.label}>Email Address (Optional)</Text>
             <TextInput
               style={styles.input}
-              placeholder="email@example.com"
+              placeholder="member@email.com"
+              placeholderTextColor={colors.textMuted}
               value={form.email}
               onChangeText={v => updateField('email', v)}
               keyboardType="email-address"
@@ -315,10 +365,12 @@ function renderFormSections(
             />
           </View>
         </View>
-        <Text style={styles.label}>Home Address</Text>
+
+        <Text style={styles.label}>Home Street Address</Text>
         <TextInput
           style={[styles.input, styles.inputMultiline]}
-          placeholder="Street, Barangay, City..."
+          placeholder="Street, Barangay, City / Province..."
+          placeholderTextColor={colors.textMuted}
           value={form.address}
           onChangeText={v => updateField('address', v)}
           multiline
@@ -326,72 +378,98 @@ function renderFormSections(
         />
       </View>
 
-      {/* Church Involvement */}
+      {/* Card 3: Church Involvement */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Church Involvement</Text>
+
         <View style={styles.row}>
           <View style={styles.colFlex1}>
-            <Text style={styles.label}>Status</Text>
+            <Text style={styles.label}>Membership Status</Text>
             <Dropdown
               label="Select Status"
               value={form.status}
-              options={['Visitor', 'New Member', 'Member', 'Leader']}
+              options={STATUS_OPTIONS}
               onSelect={v => updateField('status', v)}
             />
           </View>
+
           <View style={styles.colFlex1}>
-            <Text style={styles.label}>Ministry / Team</Text>
+            <Text style={styles.label}>Ministry Placement</Text>
             <Dropdown
               label="Select Ministry"
               value={form.ministry}
-              options={['Unassigned', 'Youth Ministry', 'Worship Team', 'Ushers', 'Media Team', 'Children Ministry']}
+              options={MINISTRY_OPTIONS}
               onSelect={v => updateField('ministry', v)}
             />
           </View>
         </View>
-        <View style={styles.row}>
+
+        <View style={[styles.row, { marginTop: 14 }]}>
           <View style={styles.colFlex1}>
             <Text style={styles.label}>Date Joined</Text>
             <TextInput
               style={styles.input}
               placeholder="MM / DD / YYYY"
+              placeholderTextColor={colors.textMuted}
               value={form.dateJoined}
               onChangeText={v => updateField('dateJoined', v)}
-              keyboardType="numeric"
             />
           </View>
           <View style={styles.colFlex1} />
         </View>
       </View>
 
-      {/* Family Connections */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Family Connections Registry</Text>
-        <View style={styles.row}>
-          <View style={styles.colFlex2}>
-            <Text style={styles.label}>Select Church Member(s)</Text>
-            <Dropdown
-              label="Choose profile to link..."
-              value=""
-              options={['— No members yet —']}
-              onSelect={() => {}}
-            />
-          </View>
-          <View style={styles.colFlex1}>
-            <Text style={styles.label}>Relationship</Text>
-            <Dropdown
-              label="Relationship"
-              value="Spouse"
-              options={['Spouse', 'Parent', 'Child', 'Sibling', 'Other']}
-              onSelect={() => {}}
-            />
-          </View>
-          <TouchableOpacity style={styles.linkButton}>
-            <Text style={styles.linkButtonText}>Link Member</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      {/* Submit CTA */}
+      <TouchableOpacity
+        style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
+        onPress={handleSubmit}
+        disabled={submitting}
+        activeOpacity={0.85}>
+        {submitting ? (
+          <ActivityIndicator size="small" color="#181614" />
+        ) : (
+          <>
+            <UserPlus size={18} color="#181614" strokeWidth={2.4} />
+            <Text style={styles.submitText}>Complete Registration</Text>
+          </>
+        )}
+      </TouchableOpacity>
     </>
   );
-}
 
+  return (
+    <View style={styles.container}>
+      {/* ── Page Header ── */}
+      <View style={styles.pageHeader}>
+        <Text style={styles.pageTitle}>Member Registration</Text>
+        <Text style={styles.pageSubtitle}>
+          Record new attendee or transfer profile for church records
+        </Text>
+      </View>
+
+      {/* ── Scrollable Body ── */}
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          isLandscape && styles.scrollContentLandscape,
+        ]}
+        showsVerticalScrollIndicator={false}>
+        {isLandscape ? (
+          <View style={styles.twoCol}>
+            <View style={styles.leftCol}>
+              {renderPhotoAndSource()}
+            </View>
+            <View style={styles.rightCol}>
+              {renderFormFields()}
+            </View>
+          </View>
+        ) : (
+          <View>
+            {renderPhotoAndSource()}
+            {renderFormFields()}
+          </View>
+        )}
+      </ScrollView>
+    </View>
+  );
+}
