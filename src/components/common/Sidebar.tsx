@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Animated,
   Modal,
+  Easing,
 } from 'react-native';
 import {
   CalendarCheck,
@@ -19,6 +20,7 @@ import {
 
 import { styles, PANEL_WIDTH } from './Sidebar.styles';
 import { colors, getAvatarGradient } from '../../assets/style/theme';
+import { APP_CONFIG } from '../../constants/app';
 
 const SIDEBAR_ITEMS = [
   { icon: CalendarCheck, label: 'Service Check-in', screen: 'EventSelect' },
@@ -36,7 +38,7 @@ type Props = {
   onLogout: () => void;
 };
 
-export default function Sidebar({
+function Sidebar({
   activeScreen,
   onCollapse,
   onExpand,
@@ -58,41 +60,39 @@ export default function Sidebar({
   useEffect(() => {
     if (isOpen) {
       Animated.parallel([
-        Animated.spring(slideAnim, {
+        Animated.timing(slideAnim, {
           toValue: 0,
+          duration: 180,
+          easing: Easing.out(Easing.cubic),
           useNativeDriver: true,
-          tension: 80,
-          friction: 12,
         }),
         Animated.timing(collapsedFade, {
           toValue: 0,
-          duration: 80,
+          duration: 60,
           useNativeDriver: true,
         }),
         Animated.timing(fadeAnim, {
           toValue: 1,
-          duration: 200,
-          delay: 100,
+          duration: 160,
           useNativeDriver: true,
         }),
       ]).start();
     } else {
       Animated.parallel([
-        Animated.spring(slideAnim, {
+        Animated.timing(slideAnim, {
           toValue: -PANEL_WIDTH,
+          duration: 90,
+          easing: Easing.out(Easing.quad),
           useNativeDriver: true,
-          tension: 80,
-          friction: 12,
         }),
         Animated.timing(fadeAnim, {
           toValue: 0,
-          duration: 80,
+          duration: 50,
           useNativeDriver: true,
         }),
         Animated.timing(collapsedFade, {
           toValue: 1,
-          duration: 200,
-          delay: 100,
+          duration: 90,
           useNativeDriver: true,
         }),
       ]).start();
@@ -160,6 +160,7 @@ export default function Sidebar({
                   styles.miniItem,
                   isActive && styles.miniItemActive,
                 ]}
+                delayPressIn={0}
                 onPress={() => onNavigate(item.screen)}
                 activeOpacity={0.75}>
                 <IconComponent
@@ -202,7 +203,7 @@ export default function Sidebar({
               <Cross size={18} color={colors.gold} strokeWidth={2.4} />
             </View>
             <View style={styles.brandTextWrap}>
-              <Text style={styles.churchName}>SANCTUARY</Text>
+              <Text style={styles.churchName}>{APP_CONFIG.CHURCH_NAME_UPPER}</Text>
               <Text style={styles.churchSubtitle}>Usher Terminal System</Text>
             </View>
           </View>
@@ -223,10 +224,8 @@ export default function Sidebar({
                   styles.expandedItem,
                   isActive && styles.expandedItemActive,
                 ]}
-                onPress={() => {
-                  onNavigate(item.screen);
-                  onCollapse();
-                }}
+                delayPressIn={0}
+                onPress={() => onNavigate(item.screen)}
                 activeOpacity={0.75}>
                 {isActive && <View style={styles.activePillIndicator} />}
                 <IconComponent
@@ -345,3 +344,4 @@ export default function Sidebar({
     </View>
   );
 }
+export default React.memo(Sidebar);

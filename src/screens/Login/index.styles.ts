@@ -103,10 +103,10 @@ export const styles = StyleSheet.create({
     ...shadows.gold,
   },
   churchName: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '900',
     color: colors.goldLight,
-    letterSpacing: 4,
+    letterSpacing: 2,
     textAlign: 'center',
     marginBottom: 8,
   },

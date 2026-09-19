@@ -25,6 +25,7 @@ import {
 
 import { styles } from './index.styles';
 import { colors } from '../../assets/style/theme';
+import { APP_CONFIG } from '../../constants/app';
 
 const MOCK_USERS = [
   { id: '1', username: 'admin', password: 'admin123', role: 'Admin', name: 'System Admin' },
@@ -163,7 +164,7 @@ export default function LoginScreen({ onLoginSuccess }: Props) {
         </View>
       </View>
 
-      <Text style={styles.churchName}>SANCTUARY</Text>
+      <Text style={styles.churchName}>{APP_CONFIG.CHURCH_NAME_UPPER}</Text>
       <View style={styles.goldDividerLine} />
       <Text style={styles.portalSubtitle}>MEMBERS PROFILING SYSTEM</Text>
       <View style={styles.stationBadge}>

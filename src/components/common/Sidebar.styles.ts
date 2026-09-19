@@ -130,9 +130,9 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   churchName: {
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '800',
-    letterSpacing: 1.8,
+    letterSpacing: 1.2,
     color: colors.goldLight,
   },
   churchSubtitle: {

@@ -187,6 +187,259 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  // ── QUICK PRESET PILLS ────────────────────────────────
+  quickNavRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 12,
+    flexWrap: 'wrap',
+  },
+  quickPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: radius.pill,
+    backgroundColor: '#ede6d8',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  quickPillActive: {
+    backgroundColor: colors.gold,
+    borderColor: colors.goldDark,
+    ...shadows.sm,
+  },
+  quickPillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textSecondary,
+  },
+  quickPillTextActive: {
+    color: '#181614',
+    fontWeight: '800',
+  },
+
+  // ── WEEK NAVIGATION BAR ───────────────────────────────
+  weekBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.card,
+    borderRadius: radius.lg,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.sm,
+  },
+  weekNavBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: radius.md,
+    backgroundColor: '#ede6d8',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  weekNavBtnDisabled: {
+    opacity: 0.35,
+  },
+  weekNavBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  weekInfoWrap: {
+    alignItems: 'center',
+  },
+  weekTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: colors.textPrimary,
+  },
+  weekSub: {
+    fontSize: 11,
+    color: colors.goldDark,
+    fontWeight: '700',
+    marginTop: 1,
+  },
+
+  // ── HISTORICAL NOTICE BANNER ──────────────────────────
+  historicalNoticeBanner: {
+    backgroundColor: 'rgba(181, 151, 58, 0.14)',
+    borderWidth: 1,
+    borderColor: colors.borderGold,
+    borderRadius: radius.md,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  historicalNoticeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.goldDark,
+  },
+  historicalResetBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: radius.pill,
+    backgroundColor: colors.gold,
+  },
+  historicalResetText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#181614',
+  },
+
+  // ── LOCKED & PAST CARD STATES ─────────────────────────
+  serviceCardLocked: {
+    backgroundColor: '#f3ede2',
+    borderColor: colors.border,
+    borderStyle: 'dashed',
+    opacity: 0.85,
+  },
+  statusPillLocked: {
+    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  statusDotLocked: {
+    backgroundColor: colors.textMuted,
+  },
+  statusTextLocked: {
+    color: colors.textMuted,
+  },
+  statusPillPast: {
+    backgroundColor: 'rgba(181, 151, 58, 0.14)',
+    borderWidth: 1,
+    borderColor: colors.borderGold,
+  },
+  statusDotPast: {
+    backgroundColor: colors.goldDark,
+  },
+  statusTextPast: {
+    color: colors.goldDark,
+  },
+
+  // ── CALENDAR MODAL ────────────────────────────────────
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(24, 22, 20, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  calendarModalCard: {
+    width: '100%',
+    maxWidth: 420,
+    backgroundColor: '#ffffff',
+    borderRadius: radius.xl,
+    overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: colors.borderGold,
+    ...shadows.lg,
+  },
+  calendarModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    backgroundColor: '#f9f6f0',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+  },
+  calendarModalTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: colors.textPrimary,
+  },
+  calendarMonthNavRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+  },
+  calendarMonthLabel: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: colors.textPrimary,
+  },
+  calendarGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 10,
+  },
+  calendarDayHeaderCell: {
+    width: '14.28%',
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+  calendarDayHeaderText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.textMuted,
+    textTransform: 'uppercase',
+  },
+  calendarDayCell: {
+    width: '14.28%',
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.sm,
+    marginVertical: 2,
+  },
+  calendarDayCellWeekend: {
+    backgroundColor: 'rgba(181, 151, 58, 0.1)',
+    borderWidth: 1,
+    borderColor: colors.borderGold,
+  },
+  calendarDayCellToday: {
+    borderWidth: 1.5,
+    borderColor: colors.goldDark,
+  },
+  calendarDayText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  calendarDayTextMuted: {
+    color: colors.textMuted,
+    opacity: 0.5,
+  },
+  calendarDayTextWeekend: {
+    fontWeight: '800',
+    color: colors.goldDark,
+  },
+  calendarWeekendTag: {
+    fontSize: 8,
+    fontWeight: '800',
+    color: colors.goldDark,
+    marginTop: -2,
+  },
+  calendarModalFooter: {
+    padding: 14,
+    borderTopWidth: 1,
+    borderTopColor: colors.borderLight,
+    backgroundColor: '#f9f6f0',
+    alignItems: 'center',
+  },
+  calendarModalFooterText: {
+    fontSize: 11,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
 });
 
 export default styles;

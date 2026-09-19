@@ -1,11 +1,10 @@
 import { StyleSheet } from 'react-native';
 import { colors, radius, shadows, spacing } from '../../assets/style/theme';
 
-// ── DROPDOWN POPUP STYLES ─────────────────────────────────
+// ── DROPDOWN & MODAL PICKER STYLES ────────────────────────
 export const dropdown = StyleSheet.create({
   wrapper: {
     position: 'relative',
-    zIndex: 99,
   },
   button: {
     flexDirection: 'row',
@@ -26,25 +25,60 @@ export const dropdown = StyleSheet.create({
     color: colors.textPrimary,
     fontWeight: '600',
   },
-  menu: {
-    position: 'absolute',
-    top: 48,
-    left: 0,
-    right: 0,
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(24, 22, 20, 0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalCard: {
+    width: '100%',
+    maxWidth: 380,
+    maxHeight: 440,
     backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    zIndex: 999,
-    ...shadows.lg,
+    borderRadius: radius.lg,
     overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: colors.borderGold,
+    elevation: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+    backgroundColor: '#f9f6f0',
+  },
+  modalTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: colors.textPrimary,
+  },
+  modalCloseBtn: {
+    padding: 4,
+  },
+  modalCloseText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    fontWeight: '700',
+  },
+  modalScroll: {
+    maxHeight: 340,
   },
   option: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 11,
+    paddingHorizontal: 20,
+    paddingVertical: 13,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
   },
@@ -52,13 +86,13 @@ export const dropdown = StyleSheet.create({
     backgroundColor: colors.goldSubtle,
   },
   optionText: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.textPrimary,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   optionTextActive: {
     color: colors.goldDark,
-    fontWeight: '700',
+    fontWeight: '800',
   },
 });
 
@@ -255,6 +289,112 @@ export const styles = StyleSheet.create({
     fontWeight: '800',
   },
 
+  // ── MODE TOGGLE (QUICK VISITOR VS FULL MEMBER) ───────
+  modeContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#e6ded0',
+    borderRadius: radius.pill,
+    padding: 4,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  modeTab: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 6,
+  },
+  modeTabActive: {
+    backgroundColor: colors.sidebarBg,
+    ...shadows.sm,
+  },
+  modeTabText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  modeTabTextActive: {
+    color: '#ffffff',
+    fontWeight: '800',
+  },
+
+  // ── DATE SELECTOR & AGE BADGE ─────────────────────────
+  dateRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+  },
+  dateColMonth: {
+    flex: 2,
+  },
+  dateColDay: {
+    flex: 1.2,
+  },
+  dateColYear: {
+    flex: 1.5,
+  },
+  ageBadge: {
+    backgroundColor: 'rgba(181, 151, 58, 0.15)',
+    borderWidth: 1,
+    borderColor: colors.borderGold,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: radius.pill,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  ageBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.goldDark,
+  },
+
+  // ── AUTO CHECK-IN CARD ────────────────────────────────
+  autoCheckInCard: {
+    backgroundColor: colors.card,
+    borderWidth: 1.5,
+    borderColor: colors.borderGold,
+    borderRadius: radius.lg,
+    padding: 14,
+    marginBottom: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    ...shadows.sm,
+  },
+  autoCheckInLeft: {
+    flex: 1,
+    marginRight: 12,
+  },
+  autoCheckInTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: colors.textPrimary,
+  },
+  autoCheckInSubtitle: {
+    fontSize: 11,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+  },
+  checkboxActive: {
+    backgroundColor: colors.gold,
+    borderColor: colors.gold,
+  },
+
   // ── SUBMIT CTA ────────────────────────────────────────
   submitButton: {
     backgroundColor: colors.gold,
@@ -276,5 +416,56 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '800',
     letterSpacing: 0.4,
+  },
+
+  // ── ROLE SELECTION CARD STYLES ────────────────────────
+  roleCardRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 6,
+    marginBottom: 10,
+  },
+  roleOptionCard: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: radius.md,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  roleOptionCardActive: {
+    backgroundColor: colors.goldSubtle,
+    borderColor: colors.gold,
+  },
+  roleOptionTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textSecondary,
+    marginBottom: 3,
+    textAlign: 'center',
+  },
+  roleOptionTitleActive: {
+    color: colors.goldDark,
+    fontWeight: '800',
+  },
+  roleOptionDesc: {
+    fontSize: 10,
+    color: colors.textMuted,
+    textAlign: 'center',
+  },
+  roleBadgeMini: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: radius.pill,
+    backgroundColor: 'rgba(181, 151, 58, 0.15)',
+    marginTop: 4,
+  },
+  roleBadgeMiniText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: colors.goldDark,
   },
 });

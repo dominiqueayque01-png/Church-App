@@ -59,6 +59,17 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.successBorder,
   },
+  headerRightChipArchived: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fef3c7',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: radius.pill,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#fde68a',
+  },
   syncPulse: {
     width: 6,
     height: 6,
@@ -70,6 +81,41 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.success,
     letterSpacing: 0.4,
+  },
+  archivedChipText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#b45309',
+    letterSpacing: 0.4,
+  },
+  historicalBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#fffbeb',
+    borderBottomWidth: 1,
+    borderBottomColor: '#fde68a',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    gap: 10,
+  },
+  historicalBannerText: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#92400e',
+  },
+  historicalBannerBadge: {
+    backgroundColor: '#fde68a',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.pill,
+  },
+  historicalBannerBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#78350f',
+    letterSpacing: 0.3,
   },
 
   // ── DUAL-PANE LANDSCAPE LAYOUT ─────────────────────────
@@ -283,6 +329,47 @@ export const styles = StyleSheet.create({
   },
   statusTextInactive: {
     color: colors.textMuted,
+  },
+
+  // Role Badges
+  roleBadgeGold: {
+    backgroundColor: 'rgba(181, 151, 58, 0.16)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.borderGold,
+  },
+  roleBadgeGoldText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: colors.goldDark,
+  },
+  roleBadgeBlue: {
+    backgroundColor: 'rgba(41, 128, 185, 0.14)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: 'rgba(41, 128, 185, 0.3)',
+  },
+  roleBadgeBlueText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#1f618d',
+  },
+  roleBadgeGreen: {
+    backgroundColor: 'rgba(39, 174, 96, 0.14)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: 'rgba(39, 174, 96, 0.3)',
+  },
+  roleBadgeGreenText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: colors.success,
   },
 
   // Check In Button

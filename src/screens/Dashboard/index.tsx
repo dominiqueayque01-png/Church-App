@@ -6,28 +6,64 @@ import {
   TouchableOpacity,
   ScrollView,
   useWindowDimensions,
+  InteractionManager,
 } from 'react-native';
 import {
   CalendarCheck,
   UserPlus,
   Users,
-  Clock,
-  ShieldCheck,
   Sparkles,
   ArrowRight,
   HeartHandshake,
   CheckCircle2,
 } from '../../components/common/Icons';
 
-import { colors, radius, shadows, spacing } from '../../assets/style/theme';
+import { colors, radius, shadows } from '../../assets/style/theme';
+import { getAllMembers } from '../../services/sync';
 
 type Props = {
   onNavigate?: (screen: string) => void;
 };
 
-export default function DashboardScreen({ onNavigate }: Props) {
+function DashboardScreen({ onNavigate }: Props) {
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
+
+  const [totalMembers, setTotalMembers] = React.useState(0);
+  const [visitorCount, setVisitorCount] = React.useState(0);
+  const [ministryCount, setMinistryCount] = React.useState(0);
+  const [youthCount, setYouthCount] = React.useState(0);
+
+  React.useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(async () => {
+      try {
+        const members = await getAllMembers();
+        let visitors = 0;
+        let youth = 0;
+        let ministry = 0;
+
+        members.forEach((m: any) => {
+          const isVisitor = m.status === 'visitor' || m.ministry === 'Visitor';
+          const isYouth = !isVisitor && (m.ministry === 'Youth Ministry' || m.ministry === 'Youth');
+          if (isVisitor) {
+            visitors++;
+          } else if (isYouth) {
+            youth++;
+          } else {
+            ministry++;
+          }
+        });
+
+        setTotalMembers(members.length);
+        setVisitorCount(visitors);
+        setYouthCount(youth);
+        setMinistryCount(ministry);
+      } catch (err) {
+        console.log('Error loading dashboard stats:', err);
+      }
+    });
+    return () => task.cancel();
+  }, []);
 
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -35,6 +71,12 @@ export default function DashboardScreen({ onNavigate }: Props) {
     day: 'numeric',
     year: 'numeric',
   });
+
+  const isSaturdayToday = new Date().getDay() === 6;
+  const activeServiceName = isSaturdayToday
+    ? 'Saturday Ministry Gathering'
+    : 'Sunday Fellowship Gathering';
+  const activeServiceRoom = isSaturdayToday ? 'Main Sanctuary' : 'Sanctuary & Youth Center';
 
   return (
     <View style={styles.container}>
@@ -65,9 +107,13 @@ export default function DashboardScreen({ onNavigate }: Props) {
               <Users size={22} color={colors.goldDark} strokeWidth={2.2} />
             </View>
             <View>
-              <Text style={styles.statLabel}>EXPECTED ATTENDEES</Text>
-              <Text style={styles.statValue}>120+</Text>
-              <Text style={styles.statSub}>Across 2 services today</Text>
+              <Text style={styles.statLabel}>REGISTERED PROFILES</Text>
+              <Text style={styles.statValue}>{totalMembers}</Text>
+              <Text style={styles.statSub}>
+                {totalMembers === 0
+                  ? 'No records entered yet'
+                  : `${ministryCount} Ministry • ${youthCount} Youth • ${visitorCount} Visitors`}
+              </Text>
             </View>
           </View>
 
@@ -78,8 +124,8 @@ export default function DashboardScreen({ onNavigate }: Props) {
             </View>
             <View>
               <Text style={styles.statLabel}>ACTIVE SERVICE</Text>
-              <Text style={styles.statValue}>Youth Fellowship</Text>
-              <Text style={styles.statSub}>9:00 AM – 5:00 PM</Text>
+              <Text style={styles.statValue} numberOfLines={1}>{activeServiceName}</Text>
+              <Text style={styles.statSub}>{activeServiceRoom}</Text>
             </View>
           </View>
 
@@ -89,9 +135,9 @@ export default function DashboardScreen({ onNavigate }: Props) {
               <UserPlus size={22} color={colors.info} strokeWidth={2.2} />
             </View>
             <View>
-              <Text style={styles.statLabel}>NEW REGISTRATIONS</Text>
-              <Text style={styles.statValue}>8 This Week</Text>
-              <Text style={styles.statSub}>Syncing with admin cloud</Text>
+              <Text style={styles.statLabel}>ROLE SEPARATION</Text>
+              <Text style={styles.statValue}>Ministry & Youth</Text>
+              <Text style={styles.statSub}>Saturday / Sunday Contextual</Text>
             </View>
           </View>
         </View>
@@ -352,3 +398,5 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 });
+
+export default React.memo(DashboardScreen);

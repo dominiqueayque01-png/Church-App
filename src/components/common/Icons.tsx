@@ -714,3 +714,37 @@ export const HeartHandshake: React.FC<IconProps> = ({
     <Text style={{ fontSize: size * 0.75, color }}>🤝</Text>
   </View>
 );
+
+// ── 27. CHEVRON LEFT ─────────────────────────────────────
+export const ChevronLeft: React.FC<IconProps> = ({
+  size = DEFAULT_SIZE,
+  color = DEFAULT_COLOR,
+  style,
+}) => (
+  <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
+    <Text style={{ fontSize: size * 0.75, color, fontWeight: '700' }}>‹</Text>
+  </View>
+);
+
+// ── 30. HISTORY ──────────────────────────────────────────
+export const History: React.FC<IconProps> = ({
+  size = DEFAULT_SIZE,
+  color = DEFAULT_COLOR,
+  style,
+}) => (
+  <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
+    <Text style={{ fontSize: size * 0.7, color, fontWeight: '800' }}>🗓️</Text>
+  </View>
+);
+
+// ── 31. CALENDAR DAYS ────────────────────────────────────
+export const CalendarDays: React.FC<IconProps> = ({
+  size = DEFAULT_SIZE,
+  color = DEFAULT_COLOR,
+  style,
+}) => (
+  <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
+    <Text style={{ fontSize: size * 0.75, color }}>📅</Text>
+  </View>
+);
+

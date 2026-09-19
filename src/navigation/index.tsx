@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   SafeAreaView,
   View,
@@ -16,6 +14,7 @@ import DashboardScreen from '../screens/Dashboard';
 import LoginScreen from '../screens/Login';
 import Sidebar from '../components/common/Sidebar';
 import { colors } from '../assets/style/theme';
+import { syncAll } from '../services/sync';
 
 export type RootStackParamList = {
   EventSelect: undefined;
@@ -35,97 +34,170 @@ export default function Navigation() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('EventSelect');
   const [currentUser, setCurrentUser] = useState<LoggedInUser | null>(null);
+  const [currentEvent, setCurrentEvent] = useState<{ id: string; name: string; date?: string }>({
+    id: '33333333-3333-3333-3333-333333333302',
+    name: 'Sunday Fellowship Gathering',
+    date: undefined,
+  });
+  const currentEventRef = useRef(currentEvent);
+  currentEventRef.current = currentEvent;
+
+  const [visitedTabs, setVisitedTabs] = useState<Record<string, boolean>>({
+    EventSelect: true,
+  });
+
+  // Run initial sync with Supabase Cloud
+  React.useEffect(() => {
+    syncAll().catch(err => console.log('Initial background sync notice:', err));
+  }, []);
+
+  const handleNavigate = useCallback((screen: string) => {
+    setActiveTab(screen);
+    setSidebarOpen(false);
+    setVisitedTabs(prev => (prev[screen] ? prev : { ...prev, [screen]: true }));
+  }, []);
+
+  const handleCollapse = useCallback(() => {
+    setSidebarOpen(false);
+  }, []);
+
+  const handleExpand = useCallback(() => {
+    setSidebarOpen(true);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setCurrentUser(null);
+  }, []);
+
+  const handleNavigateToCheckIn = useCallback((eventId: string, eventName: string, eventDate?: string) => {
+    const ev = { id: eventId, name: eventName, date: eventDate };
+    setCurrentEvent(ev);
+    currentEventRef.current = ev;
+    setActiveTab('CheckIn_' + eventId + '_' + (eventDate || ''));
+    setVisitedTabs(prev => (prev.CheckIn ? prev : { ...prev, CheckIn: true }));
+  }, []);
+
+  const handleBackToEventSelect = useCallback(() => {
+    setActiveTab('EventSelect');
+  }, []);
+
+  const handleNavigateToNewMember = useCallback((eventId?: string, eventName?: string) => {
+    if (eventId) {
+      const ev = { id: eventId, name: eventName || 'Service Gathering' };
+      setCurrentEvent(ev);
+      currentEventRef.current = ev;
+    }
+    setActiveTab('NewMember');
+    setVisitedTabs(prev => (prev.NewMember ? prev : { ...prev, NewMember: true }));
+  }, []);
+
+  const handleNewMemberNavigateToCheckIn = useCallback(() => {
+    setActiveTab('CheckIn_' + currentEventRef.current.id + '_' + currentEventRef.current.name);
+  }, []);
+
+  const handleCheckInNavigateToNewMember = useCallback(() => {
+    handleNavigateToNewMember(currentEventRef.current.id, currentEventRef.current.name);
+  }, [handleNavigateToNewMember]);
 
   // Show login screen if not logged in
   if (!currentUser) {
     return (
       <SafeAreaView style={styles.safeAreaDark}>
         <StatusBar barStyle="light-content" backgroundColor={colors.sidebarBg} />
-        <LoginScreen onLoginSuccess={user => setCurrentUser(user)} />
+        <LoginScreen onLoginSuccess={user => {
+          setCurrentUser(user);
+          syncAll().catch(err => console.log('Post-login sync notice:', err));
+        }} />
       </SafeAreaView>
     );
   }
 
   return (
-    <NavigationContainer>
-      <SafeAreaView style={styles.safeArea}>
-        <StatusBar barStyle="light-content" backgroundColor={colors.sidebarBg} />
-        <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.sidebarBg} />
+      <View style={styles.container}>
 
-          {/* Sanctuary Sidebar */}
-          <Sidebar
-            activeScreen={activeTab.startsWith('CheckIn_') ? 'EventSelect' : activeTab}
-            isOpen={sidebarOpen}
-            onCollapse={() => setSidebarOpen(false)}
-            onExpand={() => setSidebarOpen(true)}
-            onNavigate={(screen: string) => {
-              setActiveTab(screen);
-              setSidebarOpen(false);
-            }}
-            currentUser={currentUser}
-            onLogout={() => setCurrentUser(null)}
+        {/* Sanctuary Sidebar */}
+        <Sidebar
+          activeScreen={activeTab.startsWith('CheckIn_') ? 'EventSelect' : activeTab}
+          isOpen={sidebarOpen}
+          onCollapse={handleCollapse}
+          onExpand={handleExpand}
+          onNavigate={handleNavigate}
+          currentUser={currentUser}
+          onLogout={handleLogout}
+        />
+
+        {/* Dim Backdrop Overlay */}
+        {sidebarOpen && (
+          <TouchableOpacity
+            style={styles.overlay}
+            activeOpacity={1}
+            onPress={handleCollapse}
           />
+        )}
 
-          {/* Dim Backdrop Overlay */}
-          {sidebarOpen && (
-            <TouchableOpacity
-              style={styles.overlay}
-              activeOpacity={1}
-              onPress={() => setSidebarOpen(false)}
+        {/* Main Content Viewport */}
+        <View style={styles.main}>
+          {/* Event Select Screen */}
+          <View
+            style={[
+              styles.screen,
+              activeTab !== 'EventSelect' && styles.hidden,
+            ]}>
+            <EventSelectScreen
+              onNavigateToCheckIn={handleNavigateToCheckIn}
             />
-          )}
+          </View>
 
-          {/* Main Content Viewport */}
-          <View style={styles.main}>
-            {/* Event Select Screen */}
-            <View
-              style={[
-                styles.screen,
-                activeTab !== 'EventSelect' && styles.hidden,
-              ]}>
-              <EventSelectScreen
-                onNavigateToCheckIn={(eventId, eventName) =>
-                  setActiveTab('CheckIn_' + eventId + '_' + eventName)
-                }
-              />
-            </View>
-
-            {/* Member Registration Screen */}
+          {/* Member Registration Screen */}
+          {visitedTabs.NewMember && (
             <View
               style={[
                 styles.screen,
                 activeTab !== 'NewMember' && styles.hidden,
               ]}>
-              <NewMemberScreen />
+              <NewMemberScreen
+                activeEventId={currentEvent.id}
+                activeEventName={currentEvent.name}
+                onNavigateToCheckIn={handleNewMemberNavigateToCheckIn}
+              />
             </View>
+          )}
 
-            {/* Shift Overview Dashboard Screen */}
+          {/* Shift Overview Dashboard Screen */}
+          {visitedTabs.Dashboard && (
             <View
               style={[
                 styles.screen,
                 activeTab !== 'Dashboard' && styles.hidden,
               ]}>
               <DashboardScreen
-                onNavigate={(screen) => setActiveTab(screen)}
+                onNavigate={handleNavigate}
               />
             </View>
+          )}
 
-            {/* Check-In Terminal Screen */}
-            {activeTab.startsWith('CheckIn_') && (
-              <View style={styles.screen}>
-                <CheckInScreen
-                  eventId={activeTab.split('_')[1]}
-                  eventName={activeTab.split('_').slice(2).join('_')}
-                  onBack={() => setActiveTab('EventSelect')}
-                  onNavigateToNewMember={() => setActiveTab('NewMember')}
-                />
-              </View>
-            )}
-          </View>
-
+          {/* Check-In Terminal Screen */}
+          {visitedTabs.CheckIn && (
+            <View
+              style={[
+                styles.screen,
+                !activeTab.startsWith('CheckIn_') && styles.hidden,
+              ]}>
+              <CheckInScreen
+                eventId={currentEvent.id}
+                eventName={currentEvent.name}
+                eventDate={currentEvent.date}
+                onBack={handleBackToEventSelect}
+                onNavigateToNewMember={handleCheckInNavigateToNewMember}
+              />
+            </View>
+          )}
         </View>
-      </SafeAreaView>
-    </NavigationContainer>
+
+      </View>
+    </SafeAreaView>
   );
 }
 
