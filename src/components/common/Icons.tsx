@@ -605,10 +605,25 @@ export const Camera: React.FC<IconProps> = ({
 export const Phone: React.FC<IconProps> = ({
   size = DEFAULT_SIZE,
   color = DEFAULT_COLOR,
+  strokeWidth = DEFAULT_STROKE,
   style,
 }) => (
   <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
-    <Text style={{ fontSize: size * 0.75, color }}>📞</Text>
+    <View
+      style={{
+        width: size * 0.65,
+        height: size * 0.65,
+        borderWidth: Math.max(1.5, strokeWidth),
+        borderColor: color,
+        borderRadius: 4,
+        justifyContent: 'space-between',
+        padding: 2,
+        transform: [{ rotate: '-25deg' }],
+      }}>
+      <View style={{ width: '100%', height: 2, backgroundColor: color, borderRadius: 1 }} />
+      <View style={{ width: '40%', height: 2, backgroundColor: color, borderRadius: 1, alignSelf: 'center' }} />
+      <View style={{ width: '100%', height: 2, backgroundColor: color, borderRadius: 1 }} />
+    </View>
   </View>
 );
 
@@ -630,7 +645,17 @@ export const Mail: React.FC<IconProps> = ({
         justifyContent: 'center',
         alignItems: 'center',
       }}>
-      <Text style={{ fontSize: size * 0.45, color, marginTop: -4 }}>✉</Text>
+      <View
+        style={{
+          width: size * 0.5,
+          height: size * 0.28,
+          borderBottomWidth: Math.max(1.2, strokeWidth * 0.8),
+          borderRightWidth: Math.max(1.2, strokeWidth * 0.8),
+          borderColor: color,
+          transform: [{ rotate: '45deg' }],
+          marginTop: -size * 0.12,
+        }}
+      />
     </View>
   </View>
 );
@@ -678,7 +703,44 @@ export const Sparkles: React.FC<IconProps> = ({
   style,
 }) => (
   <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
-    <Text style={{ fontSize: size * 0.8, color }}>✦</Text>
+    <View
+      style={{
+        position: 'absolute',
+        width: 2,
+        height: size * 0.7,
+        backgroundColor: color,
+        borderRadius: 1,
+      }}
+    />
+    <View
+      style={{
+        position: 'absolute',
+        width: size * 0.7,
+        height: 2,
+        backgroundColor: color,
+        borderRadius: 1,
+      }}
+    />
+    <View
+      style={{
+        position: 'absolute',
+        width: 2,
+        height: size * 0.4,
+        backgroundColor: color,
+        borderRadius: 1,
+        transform: [{ rotate: '45deg' }],
+      }}
+    />
+    <View
+      style={{
+        position: 'absolute',
+        width: size * 0.4,
+        height: 2,
+        backgroundColor: color,
+        borderRadius: 1,
+        transform: [{ rotate: '45deg' }],
+      }}
+    />
   </View>
 );
 
@@ -686,10 +748,35 @@ export const Sparkles: React.FC<IconProps> = ({
 export const RotateCcw: React.FC<IconProps> = ({
   size = DEFAULT_SIZE,
   color = DEFAULT_COLOR,
+  strokeWidth = DEFAULT_STROKE,
   style,
 }) => (
   <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
-    <Text style={{ fontSize: size * 0.8, color, fontWeight: '700' }}>↺</Text>
+    <View
+      style={{
+        width: size * 0.75,
+        height: size * 0.75,
+        borderRadius: (size * 0.75) / 2,
+        borderWidth: Math.max(1.5, strokeWidth),
+        borderColor: color,
+        borderTopColor: 'transparent',
+      }}
+    />
+    <View
+      style={{
+        position: 'absolute',
+        top: size * 0.1,
+        left: size * 0.18,
+        width: 0,
+        height: 0,
+        borderTopWidth: 4,
+        borderBottomWidth: 4,
+        borderRightWidth: 5,
+        borderTopColor: 'transparent',
+        borderBottomColor: 'transparent',
+        borderRightColor: color,
+      }}
+    />
   </View>
 );
 
@@ -708,10 +795,24 @@ export const Radio: React.FC<IconProps> = ({
 export const HeartHandshake: React.FC<IconProps> = ({
   size = DEFAULT_SIZE,
   color = DEFAULT_COLOR,
+  strokeWidth = DEFAULT_STROKE,
   style,
 }) => (
   <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
-    <Text style={{ fontSize: size * 0.75, color }}>🤝</Text>
+    <View
+      style={{
+        width: size * 0.8,
+        height: size * 0.5,
+        borderWidth: Math.max(1.5, strokeWidth),
+        borderColor: color,
+        borderRadius: 4,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+      }}>
+      <View style={{ width: 3, height: 6, backgroundColor: color, borderRadius: 1.5 }} />
+      <View style={{ width: 3, height: 6, backgroundColor: color, borderRadius: 1.5 }} />
+    </View>
   </View>
 );
 
@@ -719,10 +820,96 @@ export const HeartHandshake: React.FC<IconProps> = ({
 export const ChevronLeft: React.FC<IconProps> = ({
   size = DEFAULT_SIZE,
   color = DEFAULT_COLOR,
+  strokeWidth = DEFAULT_STROKE,
   style,
 }) => (
   <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
-    <Text style={{ fontSize: size * 0.75, color, fontWeight: '700' }}>‹</Text>
+    <View
+      style={{
+        width: size * 0.35,
+        height: size * 0.35,
+        borderTopWidth: Math.max(1.5, strokeWidth),
+        borderLeftWidth: Math.max(1.5, strokeWidth),
+        borderColor: color,
+        transform: [{ rotate: '-45deg' }],
+        marginLeft: 2,
+      }}
+    />
+  </View>
+);
+
+// ── 28. ZAP (Lightning) ──────────────────────────────────
+export const Zap: React.FC<IconProps> = ({
+  size = DEFAULT_SIZE,
+  color = DEFAULT_COLOR,
+  style,
+}) => (
+  <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
+    <View
+      style={{
+        width: 0,
+        height: 0,
+        borderLeftWidth: size * 0.16,
+        borderRightWidth: size * 0.16,
+        borderBottomWidth: size * 0.42,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderBottomColor: color,
+        transform: [{ rotate: '18deg' }],
+        marginTop: -size * 0.16,
+      }}
+    />
+    <View
+      style={{
+        width: 0,
+        height: 0,
+        borderLeftWidth: size * 0.16,
+        borderRightWidth: size * 0.16,
+        borderTopWidth: size * 0.42,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderTopColor: color,
+        transform: [{ rotate: '18deg' }],
+        marginTop: -size * 0.1,
+      }}
+    />
+  </View>
+);
+
+// ── 29. CLIPBOARD LIST ───────────────────────────────────
+export const ClipboardList: React.FC<IconProps> = ({
+  size = DEFAULT_SIZE,
+  color = DEFAULT_COLOR,
+  strokeWidth = DEFAULT_STROKE,
+  style,
+}) => (
+  <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
+    <View
+      style={{
+        width: size * 0.36,
+        height: 3,
+        backgroundColor: color,
+        borderRadius: 1.5,
+        marginBottom: -1,
+        zIndex: 1,
+      }}
+    />
+    <View
+      style={{
+        width: size * 0.74,
+        height: size * 0.8,
+        borderWidth: Math.max(1.5, strokeWidth),
+        borderColor: color,
+        borderRadius: 3,
+        paddingHorizontal: 3,
+        paddingTop: 5,
+        justifyContent: 'space-around',
+        paddingBottom: 3,
+      }}>
+      <View style={{ width: '80%', height: 1.5, backgroundColor: color, borderRadius: 1 }} />
+      <View style={{ width: '60%', height: 1.5, backgroundColor: color, borderRadius: 1 }} />
+      <View style={{ width: '75%', height: 1.5, backgroundColor: color, borderRadius: 1 }} />
+    </View>
   </View>
 );
 
@@ -730,10 +917,24 @@ export const ChevronLeft: React.FC<IconProps> = ({
 export const History: React.FC<IconProps> = ({
   size = DEFAULT_SIZE,
   color = DEFAULT_COLOR,
+  strokeWidth = DEFAULT_STROKE,
   style,
 }) => (
-  <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
-    <Text style={{ fontSize: size * 0.7, color, fontWeight: '800' }}>🗓️</Text>
+  <View
+    style={[
+      {
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        borderWidth: Math.max(1.5, strokeWidth),
+        borderColor: color,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      style,
+    ]}>
+    <View style={{ position: 'absolute', top: size * 0.22, width: 2, height: size * 0.28, backgroundColor: color }} />
+    <View style={{ position: 'absolute', right: size * 0.26, width: size * 0.24, height: 2, backgroundColor: color }} />
   </View>
 );
 
@@ -741,10 +942,106 @@ export const History: React.FC<IconProps> = ({
 export const CalendarDays: React.FC<IconProps> = ({
   size = DEFAULT_SIZE,
   color = DEFAULT_COLOR,
+  strokeWidth = DEFAULT_STROKE,
   style,
 }) => (
   <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
-    <Text style={{ fontSize: size * 0.75, color }}>📅</Text>
+    <View
+      style={{
+        width: size * 0.84,
+        height: size * 0.84,
+        borderWidth: Math.max(1.5, strokeWidth),
+        borderColor: color,
+        borderRadius: 3,
+        overflow: 'hidden',
+      }}>
+      <View style={{ height: size * 0.24, backgroundColor: color, width: '100%' }} />
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          padding: 2,
+          gap: 2,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <View style={{ width: 3, height: 3, backgroundColor: color, borderRadius: 1 }} />
+        <View style={{ width: 3, height: 3, backgroundColor: color, borderRadius: 1 }} />
+        <View style={{ width: 3, height: 3, backgroundColor: color, borderRadius: 1 }} />
+        <View style={{ width: 3, height: 3, backgroundColor: color, borderRadius: 1 }} />
+      </View>
+    </View>
+    <View
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: size * 0.25,
+        width: 2,
+        height: size * 0.16,
+        backgroundColor: color,
+      }}
+    />
+    <View
+      style={{
+        position: 'absolute',
+        top: 0,
+        right: size * 0.25,
+        width: 2,
+        height: size * 0.16,
+        backgroundColor: color,
+      }}
+    />
+  </View>
+);
+
+// ── 32. SHIELD ───────────────────────────────────────────
+export const Shield: React.FC<IconProps> = ({
+  size = DEFAULT_SIZE,
+  color = DEFAULT_COLOR,
+  strokeWidth = DEFAULT_STROKE,
+  style,
+}) => (
+  <View
+    style={[
+      {
+        width: size,
+        height: size,
+        borderWidth: Math.max(1.5, strokeWidth),
+        borderColor: color,
+        borderTopLeftRadius: size * 0.4,
+        borderTopRightRadius: size * 0.4,
+        borderBottomLeftRadius: size * 0.5,
+        borderBottomRightRadius: size * 0.5,
+      },
+      style,
+    ]}
+  />
+);
+
+// ── 33. USER CHECK ───────────────────────────────────────
+export const UserCheck: React.FC<IconProps> = ({
+  size = DEFAULT_SIZE,
+  color = DEFAULT_COLOR,
+  strokeWidth = DEFAULT_STROKE,
+  style,
+}) => (
+  <View style={[{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }, style]}>
+    <User size={size * 0.85} color={color} strokeWidth={strokeWidth} />
+    <View
+      style={{
+        position: 'absolute',
+        right: 0,
+        bottom: 0,
+        width: size * 0.42,
+        height: size * 0.42,
+        borderRadius: (size * 0.42) / 2,
+        backgroundColor: '#181614',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <Text style={{ fontSize: size * 0.32, color, fontWeight: '900', marginTop: -2 }}>✓</Text>
+    </View>
   </View>
 );
 

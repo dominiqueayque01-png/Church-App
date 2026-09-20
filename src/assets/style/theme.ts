@@ -75,11 +75,11 @@ export const spacing = {
 
 export const radius = {
   xs: 4,
-  sm: 6,
-  md: 10,
-  lg: 14,
-  xl: 20,
-  pill: 999,
+  sm: 6,      // Church-Admin --radius-sm: 6px
+  md: 10,     // Church-Admin --radius-md: 10px
+  lg: 14,     // Church-Admin --radius-lg: 14px
+  xl: 20,     // Church-Admin --radius-xl: 20px
+  pill: 9999, // Church-Admin --radius-full: 9999px
   round: 9999,
 };
 
@@ -94,43 +94,50 @@ export const font = {
   display: 28,
 };
 
+export const typography = {
+  serif: 'serif',
+  sans: 'sans-serif',
+};
+
 export const shadows = {
   sm: {
     shadowColor: '#2d2214',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.05,
     shadowRadius: 3,
     elevation: 2,
   },
   md: {
     shadowColor: '#2d2214',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.07,
     shadowRadius: 10,
     elevation: 4,
   },
   lg: {
     shadowColor: '#2d2214',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 20,
-    elevation: 8,
+    shadowOpacity: 0.08,
+    shadowRadius: 18,
+    elevation: 6,
   },
   gold: {
     shadowColor: '#b5973a',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.22,
     shadowRadius: 14,
-    elevation: 6,
+    elevation: 4,
   },
   dark: {
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.35,
     shadowRadius: 16,
-    elevation: 12,
+    elevation: 10,
   },
 };
+
+
 
 /**
  * Generates deterministic pastel background and text colors from a name string.

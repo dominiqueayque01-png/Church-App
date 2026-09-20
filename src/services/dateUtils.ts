@@ -178,3 +178,45 @@ export function getMonthCalendarDays(year: number, month: number): CalendarDay[]
 
   return days;
 }
+
+export type QuickWeekendOption = {
+  offset: number;
+  label: string;
+  sublabel: string;
+  range: string;
+  saturday: Date;
+  sunday: Date;
+};
+
+export function getQuickWeekendOptions(refDate: Date = new Date()): QuickWeekendOption[] {
+  const lastWeek = getWeekendDates(-1, refDate);
+  const thisWeek = getWeekendDates(0, refDate);
+  const nextWeek = getWeekendDates(1, refDate);
+
+  return [
+    {
+      offset: -1,
+      label: 'Last Week',
+      sublabel: 'Previous Gathering',
+      range: formatWeekRange(lastWeek.saturday, lastWeek.sunday),
+      saturday: lastWeek.saturday,
+      sunday: lastWeek.sunday,
+    },
+    {
+      offset: 0,
+      label: 'This Weekend',
+      sublabel: 'Current Gathering',
+      range: formatWeekRange(thisWeek.saturday, thisWeek.sunday),
+      saturday: thisWeek.saturday,
+      sunday: thisWeek.sunday,
+    },
+    {
+      offset: 1,
+      label: 'Upcoming Events',
+      sublabel: 'Next Weekend',
+      range: formatWeekRange(nextWeek.saturday, nextWeek.sunday),
+      saturday: nextWeek.saturday,
+      sunday: nextWeek.sunday,
+    },
+  ];
+}

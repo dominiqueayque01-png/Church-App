@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { colors, radius, shadows, spacing } from '../../assets/style/theme';
+import { colors, radius, shadows, typography } from '../../assets/style/theme';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.bg, // #f5f0e8
+    backgroundColor: colors.bg,
   },
 
   // ── SANCTUARY TOP BAR ─────────────────────────────────
@@ -25,8 +25,10 @@ export const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    borderRadius: radius.md,
+    borderRadius: radius.sm, // 6px
     backgroundColor: '#ede6d8',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   backButtonText: {
     fontSize: 13,
@@ -39,13 +41,15 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   headerTitle: {
-    fontSize: 17,
-    fontWeight: '800',
+    fontFamily: typography.serif,
+    fontSize: 18,
+    fontWeight: '700',
     color: colors.textPrimary,
   },
   headerDate: {
-    fontSize: 11,
+    fontSize: 11.5,
     color: colors.textSecondary,
+    fontWeight: '500',
     marginTop: 2,
   },
   headerRightChip: {
@@ -53,8 +57,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.successBg,
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: radius.pill,
+    paddingVertical: 4,
+    borderRadius: radius.pill, // 9999px pill badge matching Church-Admin
     gap: 6,
     borderWidth: 1,
     borderColor: colors.successBorder,
@@ -64,7 +68,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fef3c7',
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 4,
     borderRadius: radius.pill,
     gap: 6,
     borderWidth: 1,
@@ -77,16 +81,18 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.success,
   },
   syncText: {
-    fontSize: 10,
+    fontSize: 10.5,
     fontWeight: '700',
     color: colors.success,
     letterSpacing: 0.4,
+    textTransform: 'uppercase',
   },
   archivedChipText: {
-    fontSize: 10,
+    fontSize: 10.5,
     fontWeight: '700',
     color: '#b45309',
     letterSpacing: 0.4,
+    textTransform: 'uppercase',
   },
   historicalBanner: {
     flexDirection: 'row',
@@ -113,7 +119,7 @@ export const styles = StyleSheet.create({
   },
   historicalBannerBadgeText: {
     fontSize: 10,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#78350f',
     letterSpacing: 0.3,
   },
@@ -129,7 +135,7 @@ export const styles = StyleSheet.create({
     paddingTop: 18,
   },
   rightPanel: {
-    width: 280,
+    width: 290,
     backgroundColor: colors.card,
     borderLeftWidth: 1,
     borderLeftColor: colors.border,
@@ -145,7 +151,7 @@ export const styles = StyleSheet.create({
     paddingTop: 18,
   },
 
-  // ── SEARCH & ADD BAR ──────────────────────────────────
+  // ── SEARCH & ADD BAR (Matches Church-Admin .search-bar) ─
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -157,11 +163,11 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    borderRadius: radius.md,
+    borderRadius: radius.md, // 10px
     borderWidth: 1.5,
     borderColor: colors.border,
     paddingHorizontal: 12,
-    height: 44,
+    height: 42,
     gap: 8,
   },
   searchInput: {
@@ -172,9 +178,9 @@ export const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: colors.sidebarBg,
-    borderRadius: radius.md,
+    borderRadius: radius.md, // 10px
     paddingHorizontal: 16,
-    height: 44,
+    height: 42,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -187,10 +193,10 @@ export const styles = StyleSheet.create({
     fontSize: 12,
   },
 
-  // ── FILTER TABS ───────────────────────────────────────
+  // ── FILTER TABS (Matches Church-Admin .filter-pill) ───
   filterRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 6,
     marginBottom: 12,
     flexWrap: 'wrap',
   },
@@ -199,9 +205,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: radius.pill,
-    backgroundColor: '#ede6d8',
-    borderWidth: 1,
+    borderRadius: radius.pill, // 9999px pill filter
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
     borderColor: colors.border,
     gap: 6,
   },
@@ -215,17 +221,17 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
   filterTextActive: {
-    color: '#181614',
-    fontWeight: '800',
+    color: '#ffffff',
+    fontWeight: '700',
   },
   filterCountBadge: {
     backgroundColor: 'rgba(0, 0, 0, 0.08)',
     paddingHorizontal: 6,
     paddingVertical: 1,
-    borderRadius: 8,
+    borderRadius: radius.pill,
   },
   filterCountBadgeActive: {
-    backgroundColor: 'rgba(0, 0, 0, 0.18)',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
   },
   filterCountText: {
     fontSize: 10,
@@ -233,7 +239,7 @@ export const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   filterCountTextActive: {
-    color: '#181614',
+    color: '#ffffff',
   },
   divider: {
     height: 1,
@@ -241,7 +247,7 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  // ── MEMBER LIST & ROWS ────────────────────────────────
+  // ── MEMBER LIST & ROWS (Matches Church-Admin table) ───
   memberList: {
     paddingBottom: 40,
     gap: 8,
@@ -260,7 +266,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    borderRadius: radius.lg,
+    borderRadius: 12, // 12px rounded row
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderWidth: 1,
@@ -273,22 +279,22 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fafefc',
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 19, // circular avatar matching Church-Admin .avatar
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarText: {
-    fontSize: 15,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: '700',
   },
   memberInfo: {
     flex: 1,
   },
   memberName: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 13.5,
+    fontWeight: '600',
     color: colors.textPrimary,
     marginBottom: 3,
   },
@@ -296,6 +302,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    flexWrap: 'wrap',
   },
   tagBadge: {
     backgroundColor: '#f5f0e8',
@@ -331,44 +338,38 @@ export const styles = StyleSheet.create({
     color: colors.textMuted,
   },
 
-  // Role Badges
+  // Role Badges (Matches Church-Admin .badge--ministry, .badge--fellowship)
   roleBadgeGold: {
-    backgroundColor: 'rgba(181, 151, 58, 0.16)',
+    backgroundColor: 'rgba(181, 151, 58, 0.12)',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: colors.borderGold,
   },
   roleBadgeGoldText: {
-    fontSize: 10,
-    fontWeight: '800',
+    fontSize: 11,
+    fontWeight: '600',
     color: colors.goldDark,
   },
   roleBadgeBlue: {
-    backgroundColor: 'rgba(41, 128, 185, 0.14)',
+    backgroundColor: 'rgba(52, 152, 219, 0.12)',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: 'rgba(41, 128, 185, 0.3)',
   },
   roleBadgeBlueText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#1f618d',
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#2980b9',
   },
   roleBadgeGreen: {
-    backgroundColor: 'rgba(39, 174, 96, 0.14)',
+    backgroundColor: 'rgba(39, 174, 96, 0.12)',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: 'rgba(39, 174, 96, 0.3)',
   },
   roleBadgeGreenText: {
-    fontSize: 10,
-    fontWeight: '800',
+    fontSize: 11,
+    fontWeight: '600',
     color: colors.success,
   },
 
@@ -377,9 +378,9 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.sidebarBg,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: radius.md,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: radius.sm, // 6px
     gap: 6,
   },
   checkedInButton: {
@@ -387,13 +388,13 @@ export const styles = StyleSheet.create({
   },
   checkInText: {
     color: '#ffffff',
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
   },
   checkInTextChecked: {
     color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '800',
+    fontSize: 11.5,
+    fontWeight: '700',
   },
 
   // ── ATTENDEES SUMMARY PANEL ───────────────────────────
@@ -404,11 +405,11 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   presentTitle: {
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.textPrimary,
   },
   presentCount: {
@@ -421,13 +422,25 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.borderGold,
     paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: radius.sm,
+    paddingVertical: 3,
+    borderRadius: radius.sm, // 6px
   },
   presentRatioText: {
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.goldDark,
+  },
+  progressBarTrack: {
+    height: 4,
+    backgroundColor: '#ede6d8',
+    borderRadius: 2,
+    marginVertical: 8,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: colors.goldDark,
+    borderRadius: 2,
   },
   presentDivider: {
     height: 1,
@@ -443,7 +456,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    borderRadius: radius.md,
+    borderRadius: radius.sm, // 6px
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderWidth: 1,
@@ -454,12 +467,12 @@ export const styles = StyleSheet.create({
     marginRight: 6,
   },
   presentName: {
-    fontSize: 12,
+    fontSize: 12.5,
     fontWeight: '600',
     color: colors.textPrimary,
   },
   presentTime: {
-    fontSize: 10,
+    fontSize: 10.5,
     color: colors.textMuted,
     marginTop: 1,
   },
@@ -496,8 +509,8 @@ export const styles = StyleSheet.create({
   },
   floatingBadgeCount: {
     fontSize: 14,
-    fontWeight: '800',
-    color: '#181614',
+    fontWeight: '700',
+    color: '#ffffff',
   },
 
   // ── MODAL (PORTRAIT) ─────────────────────────────────
@@ -508,8 +521,8 @@ export const styles = StyleSheet.create({
   },
   modalSheet: {
     backgroundColor: colors.card,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
+    borderTopLeftRadius: radius.lg, // 14px
+    borderTopRightRadius: radius.lg, // 14px
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 36,
@@ -533,3 +546,5 @@ export const styles = StyleSheet.create({
     padding: 6,
   },
 });
+
+export default styles;

@@ -18,7 +18,7 @@ import {
   CheckCircle2,
 } from '../../components/common/Icons';
 
-import { colors, radius, shadows } from '../../assets/style/theme';
+import { colors, radius, shadows, typography } from '../../assets/style/theme';
 import { getAllMembers } from '../../services/sync';
 
 type Props = {
@@ -83,7 +83,7 @@ function DashboardScreen({ onNavigate }: Props) {
       {/* ── Page Header ── */}
       <View style={styles.header}>
         <View style={styles.dateChip}>
-          <Sparkles size={12} color={colors.gold} strokeWidth={2} />
+          <Sparkles size={12} color={colors.goldDark} strokeWidth={2} />
           <Text style={styles.dateChipText}>{today}</Text>
         </View>
         <Text style={styles.title}>Usher Shift Overview</Text>
@@ -95,7 +95,7 @@ function DashboardScreen({ onNavigate }: Props) {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
-        {/* ── Stats Grid ── */}
+        {/* ── Stats Grid (Matches Church-Admin .stat-card) ── */}
         <View
           style={[
             styles.statsGrid,
@@ -103,27 +103,27 @@ function DashboardScreen({ onNavigate }: Props) {
           ]}>
           {/* Card 1 */}
           <View style={styles.statCard}>
-            <View style={[styles.statIconWrap, { backgroundColor: 'rgba(181, 151, 58, 0.14)' }]}>
+            <View style={[styles.statIconWrap, { backgroundColor: 'rgba(181, 151, 58, 0.12)' }]}>
               <Users size={22} color={colors.goldDark} strokeWidth={2.2} />
             </View>
-            <View>
-              <Text style={styles.statLabel}>REGISTERED PROFILES</Text>
+            <View style={styles.statInfo}>
+              <Text style={styles.statLabel}>Registered Profiles</Text>
               <Text style={styles.statValue}>{totalMembers}</Text>
               <Text style={styles.statSub}>
                 {totalMembers === 0
                   ? 'No records entered yet'
-                  : `${ministryCount} Ministry • ${youthCount} Youth • ${visitorCount} Visitors`}
+                  : `${ministryCount} Ministry, ${youthCount} Youth, ${visitorCount} Visitors`}
               </Text>
             </View>
           </View>
 
           {/* Card 2 */}
           <View style={styles.statCard}>
-            <View style={[styles.statIconWrap, { backgroundColor: 'rgba(39, 174, 96, 0.14)' }]}>
+            <View style={[styles.statIconWrap, { backgroundColor: 'rgba(39, 174, 96, 0.12)' }]}>
               <CheckCircle2 size={22} color={colors.success} strokeWidth={2.2} />
             </View>
-            <View>
-              <Text style={styles.statLabel}>ACTIVE SERVICE</Text>
+            <View style={styles.statInfo}>
+              <Text style={styles.statLabel}>Active Service</Text>
               <Text style={styles.statValue} numberOfLines={1}>{activeServiceName}</Text>
               <Text style={styles.statSub}>{activeServiceRoom}</Text>
             </View>
@@ -131,11 +131,11 @@ function DashboardScreen({ onNavigate }: Props) {
 
           {/* Card 3 */}
           <View style={styles.statCard}>
-            <View style={[styles.statIconWrap, { backgroundColor: 'rgba(41, 128, 185, 0.14)' }]}>
+            <View style={[styles.statIconWrap, { backgroundColor: 'rgba(41, 128, 185, 0.12)' }]}>
               <UserPlus size={22} color={colors.info} strokeWidth={2.2} />
             </View>
-            <View>
-              <Text style={styles.statLabel}>ROLE SEPARATION</Text>
+            <View style={styles.statInfo}>
+              <Text style={styles.statLabel}>Role Separation</Text>
               <Text style={styles.statValue}>Ministry & Youth</Text>
               <Text style={styles.statSub}>Saturday / Sunday Contextual</Text>
             </View>
@@ -143,7 +143,7 @@ function DashboardScreen({ onNavigate }: Props) {
         </View>
 
         {/* ── Quick Action Shortcuts ── */}
-        <Text style={styles.sectionHeader}>QUICK TERMINAL SHORTCUTS</Text>
+        <Text style={styles.sectionHeader}>Quick Terminal Shortcuts</Text>
         <View
           style={[
             styles.actionGrid,
@@ -154,18 +154,18 @@ function DashboardScreen({ onNavigate }: Props) {
             onPress={() => onNavigate && onNavigate('EventSelect')}
             activeOpacity={0.85}>
             <View style={styles.actionCardLeft}>
-              <View style={styles.actionIconCircle}>
-                <CalendarCheck size={24} color={colors.gold} strokeWidth={2} />
+              <View style={styles.actionIconWrap}>
+                <CalendarCheck size={22} color={colors.gold} strokeWidth={2} />
               </View>
-              <View>
+              <View style={styles.actionCardTextWrap}>
                 <Text style={styles.actionTitle}>Service Check-In Terminal</Text>
                 <Text style={styles.actionDesc}>
                   Select active service and mark attending members
                 </Text>
               </View>
             </View>
-            <View style={styles.arrowCircle}>
-              <ArrowRight size={18} color={colors.gold} strokeWidth={2.2} />
+            <View style={styles.arrowWrap}>
+              <ArrowRight size={16} color={colors.gold} strokeWidth={2.2} />
             </View>
           </TouchableOpacity>
 
@@ -174,18 +174,18 @@ function DashboardScreen({ onNavigate }: Props) {
             onPress={() => onNavigate && onNavigate('NewMember')}
             activeOpacity={0.85}>
             <View style={styles.actionCardLeft}>
-              <View style={styles.actionIconCircle}>
-                <UserPlus size={24} color={colors.gold} strokeWidth={2} />
+              <View style={styles.actionIconWrap}>
+                <UserPlus size={22} color={colors.gold} strokeWidth={2} />
               </View>
-              <View>
+              <View style={styles.actionCardTextWrap}>
                 <Text style={styles.actionTitle}>Register New Member</Text>
                 <Text style={styles.actionDesc}>
                   Enroll a new attendee or first-time visitor profile
                 </Text>
               </View>
             </View>
-            <View style={styles.arrowCircle}>
-              <ArrowRight size={18} color={colors.gold} strokeWidth={2.2} />
+            <View style={styles.arrowWrap}>
+              <ArrowRight size={16} color={colors.gold} strokeWidth={2.2} />
             </View>
           </TouchableOpacity>
         </View>
@@ -193,19 +193,28 @@ function DashboardScreen({ onNavigate }: Props) {
         {/* ── Usher Protocol Guidelines Card ── */}
         <View style={styles.guidelineCard}>
           <View style={styles.guidelineHeader}>
-            <HeartHandshake size={20} color={colors.gold} strokeWidth={2.2} />
+            <HeartHandshake size={18} color={colors.gold} strokeWidth={2.2} />
             <Text style={styles.guidelineTitle}>Usher Ministry Reminders</Text>
           </View>
           <View style={styles.guidelineList}>
-            <Text style={styles.guidelineItem}>
-              • Greet each visitor warmly with sanctuary smile and fellowship bulletin.
-            </Text>
-            <Text style={styles.guidelineItem}>
-              • Assist elderly members and families with children toward designated priority seating.
-            </Text>
-            <Text style={styles.guidelineItem}>
-              • Check in attending members on this tablet station or record new profiles promptly.
-            </Text>
+            <View style={styles.guidelineItemRow}>
+              <View style={styles.guidelineBullet} />
+              <Text style={styles.guidelineItem}>
+                Greet each visitor warmly with sanctuary smile and fellowship bulletin.
+              </Text>
+            </View>
+            <View style={styles.guidelineItemRow}>
+              <View style={styles.guidelineBullet} />
+              <Text style={styles.guidelineItem}>
+                Assist elderly members and families with children toward designated priority seating.
+              </Text>
+            </View>
+            <View style={styles.guidelineItemRow}>
+              <View style={styles.guidelineBullet} />
+              <Text style={styles.guidelineItem}>
+                Check in attending members on this tablet station or record new profiles promptly.
+              </Text>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -232,33 +241,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     alignSelf: 'flex-start',
-    backgroundColor: '#ede6d8',
-    paddingHorizontal: 10,
+    backgroundColor: 'rgba(181, 151, 58, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(181, 151, 58, 0.2)',
+    paddingHorizontal: 12,
     paddingVertical: 4,
-    borderRadius: radius.pill,
-    marginBottom: 6,
+    borderRadius: radius.pill, // 9999px pill matching Church-Admin
+    marginBottom: 8,
   },
   dateChipText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.textSecondary,
+    fontSize: 11.5,
+    fontWeight: '600',
+    color: colors.goldDark,
   },
   title: {
-    fontSize: 22,
-    fontWeight: '900',
+    fontFamily: typography.serif,
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.textPrimary,
   },
   subtitle: {
     fontSize: 12,
     color: colors.textSecondary,
-    marginTop: 2,
+    marginTop: 3,
   },
   scrollContent: {
     padding: 24,
     paddingBottom: 48,
   },
 
-  // Stats Grid
+  // Stats Grid (Matches Church-Admin .stat-card)
   statsGrid: {
     gap: 14,
     marginBottom: 24,
@@ -268,8 +280,8 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: colors.card,
-    borderRadius: radius.xl,
+    backgroundColor: colors.card, // #faf7f0
+    borderRadius: radius.lg, // 14px
     padding: 18,
     borderWidth: 1,
     borderColor: colors.border,
@@ -281,35 +293,42 @@ const styles = StyleSheet.create({
   statIconWrap: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: radius.md, // 10px rounded icon container
     justifyContent: 'center',
     alignItems: 'center',
   },
+  statInfo: {
+    flex: 1,
+    minWidth: 0,
+  },
   statLabel: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: colors.textMuted,
-    letterSpacing: 1,
-    marginBottom: 2,
+    fontSize: 11.5,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 4,
   },
   statValue: {
-    fontSize: 18,
-    fontWeight: '900',
+    fontSize: 22,
+    fontWeight: '700',
     color: colors.textPrimary,
     marginBottom: 2,
+    lineHeight: 26,
   },
   statSub: {
     fontSize: 11,
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
 
   // Shortcuts
   sectionHeader: {
     fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 1.2,
+    fontWeight: '700',
+    letterSpacing: 0.6,
     color: colors.textSecondary,
     marginBottom: 12,
+    textTransform: 'uppercase',
   },
   actionGrid: {
     gap: 14,
@@ -321,9 +340,9 @@ const styles = StyleSheet.create({
   actionCard: {
     flex: 1,
     backgroundColor: '#ffffff',
-    borderRadius: radius.lg,
-    padding: 18,
-    borderWidth: 1.5,
+    borderRadius: radius.lg, // 14px
+    padding: 16,
+    borderWidth: 1,
     borderColor: colors.border,
     flexDirection: 'row',
     alignItems: 'center',
@@ -336,32 +355,34 @@ const styles = StyleSheet.create({
     gap: 14,
     flex: 1,
   },
-  actionIconCircle: {
+  actionIconWrap: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: radius.md, // 10px
     backgroundColor: colors.goldSubtle,
     borderWidth: 1,
     borderColor: colors.borderGold,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  actionCardTextWrap: {
+    flex: 1,
+  },
   actionTitle: {
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.textPrimary,
     marginBottom: 2,
   },
   actionDesc: {
-    fontSize: 11,
+    fontSize: 11.5,
     color: colors.textSecondary,
-    marginRight: 8,
   },
-  arrowCircle: {
+  arrowWrap: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#f5f0e8',
+    backgroundColor: colors.goldSubtle,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -369,30 +390,44 @@ const styles = StyleSheet.create({
   // Guidelines Card
   guidelineCard: {
     backgroundColor: colors.card,
-    borderRadius: radius.xl,
+    borderRadius: radius.lg, // 14px
     padding: 20,
     borderWidth: 1,
-    borderColor: colors.borderGold,
+    borderColor: colors.border,
     ...shadows.sm,
   },
   guidelineHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
     marginBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
     paddingBottom: 10,
   },
   guidelineTitle: {
+    fontFamily: typography.serif,
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.textPrimary,
   },
   guidelineList: {
     gap: 8,
   },
+  guidelineItemRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  guidelineBullet: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: colors.gold,
+    marginTop: 6,
+  },
   guidelineItem: {
+    flex: 1,
     fontSize: 12,
     color: colors.textSecondary,
     lineHeight: 18,

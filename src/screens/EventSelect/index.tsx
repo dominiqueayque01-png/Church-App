@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -14,13 +14,14 @@ import {
   Clock,
   Users,
   ArrowRight,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
   Lock,
-  CalendarDays,
-  History,
+  RotateCcw,
   X,
+  History,
+  Sparkles,
+  CalendarDays,
 } from '../../components/common/Icons';
 
 import { getAttendanceForEvent, pullAttendanceFromSupabase } from '../../services/sync';
@@ -33,6 +34,7 @@ import {
   getMonthCalendarDays,
   toMidnight,
   CalendarDay,
+  getQuickWeekendOptions,
 } from '../../services/dateUtils';
 
 import styles from './index.styles';
@@ -46,7 +48,7 @@ function EventSelectScreen({ onNavigateToCheckIn }: Props) {
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
 
-  // Week offset: 0 = This Weekend, -1 = Last Weekend, -2 = 2 Weeks Ago
+  // Week offset: 0 = This Weekend, -1 = Last Weekend, +1 = Next Weekend
   const [weekOffset, setWeekOffset] = useState<number>(0);
   const [calendarModalVisible, setCalendarModalVisible] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState<Date>(() => new Date());
@@ -66,6 +68,11 @@ function EventSelectScreen({ onNavigateToCheckIn }: Props) {
   const todayDay = new Date().getDay(); // 0 = Sun, 6 = Sat, 1-5 = Mon-Fri
   const isCurrentWeek = weekOffset === 0;
 
+  // Quick options: Last Week, This Weekend, Upcoming Events
+  const quickOptions = useMemo(() => {
+    return getQuickWeekendOptions();
+  }, []);
+
   // Load attendance counts for these specific gathering dates
   useEffect(() => {
     const task = InteractionManager.runAfterInteractions(() => {
@@ -84,7 +91,7 @@ function EventSelectScreen({ onNavigateToCheckIn }: Props) {
         }
         setCounts(newCounts);
 
-        // Also background fetch from cloud
+        // Background fetch from Supabase Cloud
         for (const item of [
           { id: satEventId, date: satDateStr },
           { id: sunEventId, date: sunDateStr },
@@ -105,54 +112,49 @@ function EventSelectScreen({ onNavigateToCheckIn }: Props) {
     return () => task.cancel();
   }, [satEventId, sunEventId, satDateStr, sunDateStr]);
 
-  // Construct dynamic services based on date and on-time weekend logic
+  // Construct dynamic services matching Church-Admin Attendance.css data structure
   const services = useMemo(() => {
     // ── SATURDAY MINISTRY GATHERING ──
     let satStatus = 'Upcoming';
     let satIsActive = false;
     let satIsLocked = false;
-    let satActionText = 'Open Check-in Terminal';
-    let satPillStyle = styles.statusPillUpcoming;
+    let satActionText = 'Check In';
+    let satBadgeStyle = styles.statusPillUpcoming;
     let satDotStyle = styles.statusDotUpcoming;
     let satTextStyle = styles.statusTextUpcoming;
 
     if (isCurrentWeek) {
       if (todayDay === 6) {
-        // Today is Saturday!
         satStatus = 'Active Today';
         satIsActive = true;
-        satActionText = 'Open Live Check-In Terminal';
-        satPillStyle = styles.statusPillActive;
+        satActionText = 'Open Check-in';
+        satBadgeStyle = styles.statusPillActive;
         satDotStyle = styles.statusDotActive;
         satTextStyle = styles.statusTextActive;
       } else if (todayDay === 0) {
-        // Today is Sunday: Saturday happened yesterday, clickable for review!
         satStatus = 'Completed Yesterday';
         satIsActive = false;
-        satActionText = 'Review Saturday Attendance';
-        satPillStyle = styles.statusPillPast;
+        satActionText = 'Review Attendance';
+        satBadgeStyle = styles.statusPillPast;
         satDotStyle = styles.statusDotPast;
         satTextStyle = styles.statusTextPast;
       } else {
-        // Weekday
         satStatus = 'Upcoming This Saturday';
         satIsActive = false;
-        satActionText = 'Open Saturday Terminal';
+        satActionText = 'Saturday Service';
       }
     } else if (weekOffset < 0) {
-      // Historical week
       satStatus = `Past Gathering (${satDateStr})`;
       satIsActive = false;
-      satActionText = 'Review Historical Attendance';
-      satPillStyle = styles.statusPillPast;
+      satActionText = 'Review Attendance';
+      satBadgeStyle = styles.statusPillPast;
       satDotStyle = styles.statusDotPast;
       satTextStyle = styles.statusTextPast;
     } else {
-      // Future week
       satStatus = 'Upcoming';
       satIsLocked = true;
-      satActionText = 'Upcoming Gathering';
-      satPillStyle = styles.statusPillLocked;
+      satActionText = 'Upcoming Service';
+      satBadgeStyle = styles.statusPillLocked;
       satDotStyle = styles.statusDotLocked;
       satTextStyle = styles.statusTextLocked;
     }
@@ -161,49 +163,44 @@ function EventSelectScreen({ onNavigateToCheckIn }: Props) {
     let sunStatus = 'Upcoming';
     let sunIsActive = false;
     let sunIsLocked = false;
-    let sunActionText = 'Open Check-in Terminal';
-    let sunPillStyle = styles.statusPillUpcoming;
+    let sunActionText = 'Check In';
+    let sunBadgeStyle = styles.statusPillUpcoming;
     let sunDotStyle = styles.statusDotUpcoming;
     let sunTextStyle = styles.statusTextUpcoming;
 
     if (isCurrentWeek) {
       if (todayDay === 6) {
-        // Today is Saturday: Sunday is locked until tomorrow!
-        sunStatus = 'Upcoming Tomorrow';
+        sunStatus = 'Available Tomorrow';
         sunIsActive = false;
-        sunIsLocked = true; // Locked on Saturday as requested
-        sunActionText = 'Available Tomorrow (Sunday)';
-        sunPillStyle = styles.statusPillLocked;
+        sunIsLocked = true;
+        sunActionText = 'Opens Sunday';
+        sunBadgeStyle = styles.statusPillLocked;
         sunDotStyle = styles.statusDotLocked;
         sunTextStyle = styles.statusTextLocked;
       } else if (todayDay === 0) {
-        // Today is Sunday: Active today!
         sunStatus = 'Active Today';
         sunIsActive = true;
-        sunActionText = 'Open Live Check-In Terminal';
-        sunPillStyle = styles.statusPillActive;
+        sunActionText = 'Open Check-in';
+        sunBadgeStyle = styles.statusPillActive;
         sunDotStyle = styles.statusDotActive;
         sunTextStyle = styles.statusTextActive;
       } else {
-        // Weekday
         sunStatus = 'Upcoming This Sunday';
         sunIsActive = false;
-        sunActionText = 'Open Sunday Terminal';
+        sunActionText = 'Sunday Service';
       }
     } else if (weekOffset < 0) {
-      // Historical week
       sunStatus = `Past Gathering (${sunDateStr})`;
       sunIsActive = false;
-      sunActionText = 'Review Historical Attendance';
-      sunPillStyle = styles.statusPillPast;
+      sunActionText = 'Review Attendance';
+      sunBadgeStyle = styles.statusPillPast;
       sunDotStyle = styles.statusDotPast;
       sunTextStyle = styles.statusTextPast;
     } else {
-      // Future week
       sunStatus = 'Upcoming';
       sunIsLocked = true;
-      sunActionText = 'Upcoming Gathering';
-      sunPillStyle = styles.statusPillLocked;
+      sunActionText = 'Upcoming Service';
+      sunBadgeStyle = styles.statusPillLocked;
       sunDotStyle = styles.statusDotLocked;
       sunTextStyle = styles.statusTextLocked;
     }
@@ -213,16 +210,19 @@ function EventSelectScreen({ onNavigateToCheckIn }: Props) {
         id: satEventId,
         name: 'Saturday Ministry Gathering',
         day: 'Saturday',
+        dayAbbr: 'SAT',
+        dayNum: satDate.getDate(),
+        isMinistry: true,
         date: satDateStr,
         displayDate: formatDisplayDate(satDate),
         time: '9:00 AM - 5:00 PM',
         room: 'Main Sanctuary',
-        targetAudience: 'Ministry Workers & Servants',
+        targetAudience: 'Ministry Members Only',
         status: satStatus,
         isActive: satIsActive,
         isLocked: satIsLocked,
         actionText: satActionText,
-        pillStyle: satPillStyle,
+        badgeStyle: satBadgeStyle,
         dotStyle: satDotStyle,
         textStyle: satTextStyle,
       },
@@ -230,16 +230,19 @@ function EventSelectScreen({ onNavigateToCheckIn }: Props) {
         id: sunEventId,
         name: 'Sunday Fellowship Gathering',
         day: 'Sunday',
+        dayAbbr: 'SUN',
+        dayNum: sunDate.getDate(),
+        isMinistry: false,
         date: sunDateStr,
         displayDate: formatDisplayDate(sunDate),
         time: '9:00 AM - 5:00 PM',
         room: 'Sanctuary & Youth Center',
-        targetAudience: 'Youth Fellowship & Ministry Facilitators',
+        targetAudience: 'Youth Fellowship & Ministry',
         status: sunStatus,
         isActive: sunIsActive,
         isLocked: sunIsLocked,
         actionText: sunActionText,
-        pillStyle: sunPillStyle,
+        badgeStyle: sunBadgeStyle,
         dotStyle: sunDotStyle,
         textStyle: sunTextStyle,
       },
@@ -269,10 +272,8 @@ function EventSelectScreen({ onNavigateToCheckIn }: Props) {
     const targetSat = toMidnight(day.date);
 
     if (day.date.getDay() === 0) {
-      // Sunday: Saturday was 1 day earlier
       targetSat.setDate(targetSat.getDate() - 1);
     } else {
-      // Monday to Saturday
       targetSat.setDate(targetSat.getDate() + (6 - day.date.getDay()));
     }
 
@@ -302,194 +303,141 @@ function EventSelectScreen({ onNavigateToCheckIn }: Props) {
     return formatWeekRange(satDate, sunDate);
   }, [satDate, sunDate]);
 
+  const selectedSatStr = satDateStr;
+  const selectedSunStr = sunDateStr;
+
   return (
     <View style={styles.container}>
-      {/* ── Sanctuary Header Banner ── */}
-      <View style={styles.header}>
-        <View style={styles.dateChip}>
-          <Calendar size={13} color={colors.gold} strokeWidth={2} />
-          <Text style={styles.dateChipText}>
-            {new Date().toLocaleDateString('en-US', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-            })}
-          </Text>
+      {/* ── Top Header Row: Title & Subtitle + Circular Calendar Button ── */}
+      <View style={styles.headerRow}>
+        <View style={styles.headerLeft}>
+          <Text style={styles.title}>Service Check-in</Text>
+          <View style={styles.subtitleRow}>
+            <Calendar size={13} color={colors.goldDark} strokeWidth={2} />
+            <Text style={styles.subtitleText}>
+              {weekOffset === 0
+                ? 'This Weekend'
+                : weekOffset === -1
+                ? 'Last Week'
+                : weekOffset === 1
+                ? 'Next Weekend'
+                : weekOffset < -1
+                ? `${Math.abs(weekOffset)} Weeks Ago`
+                : 'Upcoming Gathering'}{' '}
+              - {weekRangeLabel}
+            </Text>
+            {weekOffset !== 0 && (
+              <TouchableOpacity
+                style={styles.resetPill}
+                onPress={() => setWeekOffset(0)}
+                activeOpacity={0.75}>
+                <RotateCcw size={11} color={colors.goldDark} strokeWidth={2.4} />
+                <Text style={styles.resetPillText}>Back to Today</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-        <Text style={styles.title}>Service Gathering</Text>
-        <Text style={styles.subtitle}>
-          Select an active service to initiate usher member check-in
-        </Text>
-      </View>
 
-      {/* ── Quick Preset Navigation Pills ── */}
-      <View style={styles.quickNavRow}>
+        {/* Circular Action Button for Calendar */}
         <TouchableOpacity
-          style={[styles.quickPill, weekOffset === 0 && styles.quickPillActive]}
-          onPress={() => setWeekOffset(0)}
-          activeOpacity={0.8}>
-          <Sparkles size={12} color={weekOffset === 0 ? '#181614' : colors.goldDark} strokeWidth={2} />
-          <Text style={[styles.quickPillText, weekOffset === 0 && styles.quickPillTextActive]}>
-            This Weekend
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.quickPill, weekOffset === -1 && styles.quickPillActive]}
-          onPress={() => setWeekOffset(-1)}
-          activeOpacity={0.8}>
-          <History size={12} color={weekOffset === -1 ? '#181614' : colors.textSecondary} />
-          <Text style={[styles.quickPillText, weekOffset === -1 && styles.quickPillTextActive]}>
-            Last Weekend
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.quickPill}
+          style={[
+            styles.calendarCircleBtn,
+            weekOffset !== 0 && styles.calendarCircleBtnActive,
+          ]}
           onPress={() => {
             setCalendarMonth(new Date(satDate));
             setCalendarModalVisible(true);
           }}
-          activeOpacity={0.8}>
-          <CalendarDays size={13} color={colors.textSecondary} />
-          <Text style={styles.quickPillText}>Calendar View</Text>
+          activeOpacity={0.75}
+          accessibilityLabel="Open gathering calendar">
+          <Calendar
+            size={20}
+            color={weekOffset !== 0 ? '#181614' : colors.goldDark}
+            strokeWidth={2.2}
+          />
+          {weekOffset !== 0 && <View style={styles.activeIndicatorDot} />}
         </TouchableOpacity>
       </View>
 
-      {/* ── Week Navigation Bar ── */}
-      <View style={styles.weekBar}>
-        <TouchableOpacity
-          style={styles.weekNavBtn}
-          onPress={() => setWeekOffset(prev => prev - 1)}
-          activeOpacity={0.75}>
-          <ChevronLeft size={16} color={colors.textPrimary} />
-          <Text style={styles.weekNavBtnText}>Prev Week</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.weekInfoWrap}
-          onPress={() => {
-            setCalendarMonth(new Date(satDate));
-            setCalendarModalVisible(true);
-          }}
-          activeOpacity={0.75}>
-          <Text style={styles.weekTitle}>Week of {weekRangeLabel}</Text>
-          <Text style={styles.weekSub}>
-            {weekOffset === 0
-              ? '● Current Weekend'
-              : weekOffset === -1
-              ? '↺ Previous Weekend (Last Week)'
-              : weekOffset < -1
-              ? `↺ ${Math.abs(weekOffset)} Weeks Ago`
-              : 'Upcoming Weekend'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.weekNavBtn, weekOffset >= 1 && styles.weekNavBtnDisabled]}
-          disabled={weekOffset >= 1}
-          onPress={() => setWeekOffset(prev => prev + 1)}
-          activeOpacity={0.75}>
-          <Text style={styles.weekNavBtnText}>Next Week</Text>
-          <ChevronRight size={16} color={colors.textPrimary} />
-        </TouchableOpacity>
-      </View>
-
-      {/* ── Historical Notice Banner (if viewing past gathering) ── */}
-      {weekOffset < 0 && (
-        <View style={styles.historicalNoticeBanner}>
-          <Text style={styles.historicalNoticeText}>
-            📅 Viewing historical gathering attendance for {weekRangeLabel}.
-          </Text>
-          <TouchableOpacity
-            style={styles.historicalResetBtn}
-            onPress={() => setWeekOffset(0)}
-            activeOpacity={0.8}>
-            <Text style={styles.historicalResetText}>Jump to Today</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* ── Services Cards Grid ── */}
+      {/* ── Main Surface: 2 Service Cards Aligned with Church-Admin ── */}
       <ScrollView
         contentContainerStyle={[
           styles.cardsContainer,
           isLandscape && styles.cardsContainerLandscape,
         ]}
         showsVerticalScrollIndicator={false}>
-        {services.map(service => {
-          return (
-            <TouchableOpacity
-              key={service.id}
-              style={[
-                styles.serviceCard,
-                service.isActive && styles.serviceCardActive,
-                service.isLocked && styles.serviceCardLocked,
-                isLandscape && styles.serviceCardLandscape,
-              ]}
-              onPress={() => handleCardPress(service)}
-              activeOpacity={service.isLocked ? 0.95 : 0.85}>
-              {/* Top Meta Bar */}
-              <View style={styles.cardHeaderRow}>
-                <View style={[styles.statusPill, service.pillStyle]}>
-                  <View style={[styles.statusDot, service.dotStyle]} />
-                  <Text style={[styles.statusPillText, service.textStyle]}>
-                    {service.status}
-                  </Text>
-                </View>
-
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  {service.isLocked && <Lock size={12} color={colors.textMuted} />}
-                  <Text style={styles.cardDay}>{service.day} • {service.date}</Text>
-                </View>
+        {services.map(service => (
+          <TouchableOpacity
+            key={service.id}
+            style={[
+              styles.serviceCard,
+              service.isActive && styles.serviceCardActive,
+              service.isLocked && styles.serviceCardLocked,
+              isLandscape && styles.serviceCardLandscape,
+            ]}
+            onPress={() => handleCardPress(service)}
+            activeOpacity={service.isLocked ? 0.95 : 0.85}>
+            {/* Header: Date Tile + Titles */}
+            <View style={styles.cardHeaderRow}>
+              <View
+                style={[
+                  styles.dateBlock,
+                  service.isMinistry ? styles.dateBlockMinistry : styles.dateBlockFellowship,
+                ]}>
+                <Text style={styles.dateBlockDay}>{service.dayAbbr}</Text>
+                <Text style={styles.dateBlockNum}>{service.dayNum}</Text>
               </View>
 
-              {/* Service Title */}
-              <View style={styles.cardBody}>
-                <Text style={styles.cardName}>{service.name}</Text>
-                <Text style={styles.cardRoom}>
-                  {service.room} • {service.targetAudience}
+              <View style={styles.cardTitleWrap}>
+                <Text style={styles.cardTitle}>{service.name}</Text>
+                <Text style={styles.cardRoom}>{service.room}</Text>
+                <Text style={styles.cardAudience}>{service.targetAudience}</Text>
+              </View>
+            </View>
+
+            {/* Middle: Time & Live Attendance Badges */}
+            <View style={styles.cardMetaRow}>
+              <View style={styles.metaItem}>
+                <Clock size={13} color={colors.textSecondary} strokeWidth={2} />
+                <Text style={styles.metaText}>{service.time}</Text>
+              </View>
+              <View style={styles.metaItem}>
+                <Users size={13} color={colors.goldDark} strokeWidth={2} />
+                <Text style={styles.metaTextHighlight}>
+                  {counts[service.id] ?? 0} Checked In
                 </Text>
+              </View>
+            </View>
 
-                {/* Time & Attendance Badges */}
-                <View style={styles.metaRow}>
-                  <View style={styles.metaItem}>
-                    <Clock size={14} color={colors.textSecondary} strokeWidth={2} />
-                    <Text style={styles.metaText}>{service.time}</Text>
-                  </View>
-                  <View style={styles.metaItem}>
-                    <Users size={14} color={colors.goldDark} strokeWidth={2} />
-                    <Text style={styles.metaTextHighlight}>
-                      {counts[service.id] ?? 0} Checked-in
-                    </Text>
-                  </View>
-                </View>
+            {/* Footer: Pill Status Badge & Action Arrow */}
+            <View style={styles.cardFooter}>
+              <View style={[styles.statusPill, service.badgeStyle]}>
+                <View style={[styles.statusDot, service.dotStyle]} />
+                <Text style={[styles.statusPillText, service.textStyle]}>
+                  {service.status}
+                </Text>
               </View>
 
-              {/* Card Action Footer */}
-              <View style={styles.cardFooter}>
+              <View style={styles.actionBtn}>
                 <Text
                   style={[
-                    styles.tapText,
+                    styles.actionBtnText,
                     service.isLocked && { color: colors.textMuted },
                   ]}>
                   {service.actionText}
                 </Text>
-                <View style={styles.actionArrow}>
-                  {service.isLocked ? (
-                    <Lock size={14} color={colors.textMuted} strokeWidth={2} />
-                  ) : (
-                    <ArrowRight size={16} color={colors.gold} strokeWidth={2.4} />
-                  )}
-                </View>
+                {service.isLocked ? (
+                  <Lock size={14} color={colors.textMuted} strokeWidth={2} />
+                ) : (
+                  <ArrowRight size={14} color={colors.gold} strokeWidth={2.4} />
+                )}
               </View>
-            </TouchableOpacity>
-          );
-        })}
+            </View>
+          </TouchableOpacity>
+        ))}
       </ScrollView>
 
-      {/* ── Monthly Calendar Modal ── */}
+      {/* ── Circular Button Triggered Calendar & Events Modal ── */}
       <Modal
         visible={calendarModalVisible}
         transparent
@@ -502,72 +450,145 @@ function EventSelectScreen({ onNavigateToCheckIn }: Props) {
           <TouchableOpacity activeOpacity={1} style={styles.calendarModalCard}>
             {/* Modal Header */}
             <View style={styles.calendarModalHeader}>
-              <Text style={styles.calendarModalTitle}>Sanctuary Gathering Calendar</Text>
+              <Text style={styles.calendarModalTitle}>Gathering Calendar & Events</Text>
               <TouchableOpacity
                 onPress={() => setCalendarModalVisible(false)}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                 <X size={18} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
-            {/* Month Navigator */}
-            <View style={styles.calendarMonthNavRow}>
-              <TouchableOpacity onPress={handlePrevMonth} activeOpacity={0.7} style={{ padding: 6 }}>
-                <ChevronLeft size={18} color={colors.textPrimary} />
-              </TouchableOpacity>
+            <ScrollView contentContainerStyle={styles.modalScrollContent}>
+              {/* Quick Event Options (Last Week, This Weekend, Upcoming) */}
+              <Text style={styles.sectionLabel}>Quick Event Access</Text>
+              <View style={styles.quickOptionsWrap}>
+                {quickOptions.map(opt => {
+                  const isSelected = weekOffset === opt.offset;
+                  const Icon = opt.offset === -1 ? History : opt.offset === 0 ? Sparkles : CalendarDays;
+                  return (
+                    <TouchableOpacity
+                      key={opt.offset}
+                      style={[
+                        styles.quickOptionCard,
+                        isSelected && styles.quickOptionCardActive,
+                      ]}
+                      onPress={() => {
+                        setWeekOffset(opt.offset);
+                        setCalendarModalVisible(false);
+                      }}
+                      activeOpacity={0.8}>
+                      <View style={styles.quickOptionLeft}>
+                        <View style={styles.quickOptionTitleRow}>
+                          <Icon
+                            size={15}
+                            color={isSelected ? colors.goldDark : colors.textSecondary}
+                            strokeWidth={2}
+                          />
+                          <Text style={styles.quickOptionTitle}>{opt.label}</Text>
+                          {isSelected && (
+                            <View style={styles.activePillBadge}>
+                              <Text style={styles.activePillBadgeText}>Selected</Text>
+                            </View>
+                          )}
+                        </View>
+                        <Text style={styles.quickOptionSub}>{opt.sublabel}</Text>
+                      </View>
+                      <Text style={styles.quickOptionRange}>{opt.range}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
 
-              <Text style={styles.calendarMonthLabel}>{monthLabel}</Text>
+              {/* Interactive Monthly Calendar View */}
+              <Text style={styles.sectionLabel}>All Gathering Dates</Text>
 
-              <TouchableOpacity onPress={handleNextMonth} activeOpacity={0.7} style={{ padding: 6 }}>
-                <ChevronRight size={18} color={colors.textPrimary} />
-              </TouchableOpacity>
-            </View>
+              {/* Month Navigator */}
+              <View style={styles.calendarMonthNavRow}>
+                <TouchableOpacity
+                  onPress={handlePrevMonth}
+                  activeOpacity={0.7}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <ChevronLeft size={20} color={colors.textPrimary} />
+                </TouchableOpacity>
 
-            {/* Calendar Grid */}
-            <View style={styles.calendarGrid}>
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-                <View key={d} style={styles.calendarDayHeaderCell}>
-                  <Text
-                    style={[
-                      styles.calendarDayHeaderText,
-                      (d === 'Sat' || d === 'Sun') && { color: colors.goldDark },
-                    ]}>
-                    {d}
-                  </Text>
-                </View>
-              ))}
+                <Text style={styles.calendarMonthLabel}>{monthLabel}</Text>
 
-              {calendarDays.map((cd, index) => {
-                const isWeekend = cd.isSaturday || cd.isSunday;
-                return (
-                  <TouchableOpacity
-                    key={`${cd.dateString}-${index}`}
-                    style={[
-                      styles.calendarDayCell,
-                      isWeekend && styles.calendarDayCellWeekend,
-                      cd.isToday && styles.calendarDayCellToday,
-                    ]}
-                    onPress={() => handleSelectCalendarDay(cd)}
-                    activeOpacity={0.75}>
+                <TouchableOpacity
+                  onPress={handleNextMonth}
+                  activeOpacity={0.7}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <ChevronRight size={20} color={colors.textPrimary} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Calendar Grid */}
+              <View style={styles.calendarGrid}>
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
+                  <View key={d} style={styles.calendarDayHeaderCell}>
                     <Text
                       style={[
-                        styles.calendarDayText,
-                        !cd.isCurrentMonth && styles.calendarDayTextMuted,
-                        isWeekend && styles.calendarDayTextWeekend,
+                        styles.calendarDayHeaderText,
+                        (d === 'Sat' || d === 'Sun') && { color: colors.goldDark },
                       ]}>
-                      {cd.dayNumber}
+                      {d}
                     </Text>
-                    {cd.isSaturday && <Text style={styles.calendarWeekendTag}>Ministry</Text>}
-                    {cd.isSunday && <Text style={[styles.calendarWeekendTag, { color: '#1f618d' }]}>Fellowship</Text>}
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+                  </View>
+                ))}
+
+                {calendarDays.map((cd, index) => {
+                  const isWeekend = cd.isSaturday || cd.isSunday;
+                  const isSelectedDate =
+                    cd.dateString === selectedSatStr || cd.dateString === selectedSunStr;
+
+                  return (
+                    <TouchableOpacity
+                      key={`${cd.dateString}-${index}`}
+                      style={[
+                        styles.calendarDayCell,
+                        isWeekend && styles.calendarDayCellWeekend,
+                        isSelectedDate && styles.calendarDayCellSelected,
+                        cd.isToday && styles.calendarDayCellToday,
+                      ]}
+                      onPress={() => handleSelectCalendarDay(cd)}
+                      activeOpacity={0.75}>
+                      <Text
+                        style={[
+                          styles.calendarDayText,
+                          !cd.isCurrentMonth && styles.calendarDayTextMuted,
+                          isWeekend && styles.calendarDayTextWeekend,
+                          isSelectedDate && styles.calendarDayTextSelected,
+                        ]}>
+                        {cd.dayNumber}
+                      </Text>
+                      {cd.isSaturday && (
+                        <Text
+                          style={[
+                            styles.calendarWeekendTag,
+                            isSelectedDate && { color: '#ffffff' },
+                          ]}>
+                          Ministry
+                        </Text>
+                      )}
+                      {cd.isSunday && (
+                        <Text
+                          style={[
+                            styles.calendarWeekendTag,
+                            { color: '#1f618d' },
+                            isSelectedDate && { color: '#ffffff' },
+                          ]}>
+                          Fellowship
+                        </Text>
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
 
             {/* Modal Footer */}
             <View style={styles.calendarModalFooter}>
               <Text style={styles.calendarModalFooterText}>
-                Tap any Saturday or Sunday to load historical attendance for that gathering
+                Tap any weekend gathering to load attendance or check in members
               </Text>
             </View>
           </TouchableOpacity>

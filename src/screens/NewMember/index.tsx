@@ -16,6 +16,7 @@ import {
   UserPlus,
   CheckCircle2,
   Check,
+  X,
 } from '../../components/common/Icons';
 
 import { createMember, logAttendance } from '../../services/sync';
@@ -105,7 +106,7 @@ function Dropdown({ label, value, options, onSelect }: DropdownProps) {
                 onPress={() => setOpen(false)}
                 style={dropdown.modalCloseBtn}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                <Text style={dropdown.modalCloseText}>✕</Text>
+                <X size={16} color={colors.textSecondary} strokeWidth={2.4} />
               </TouchableOpacity>
             </View>
 
@@ -192,6 +193,18 @@ function NewMemberScreen({
 
   // Auto Check-in Toggle
   const [autoCheckIn, setAutoCheckIn] = useState(true);
+
+  const isMinistryEvent = useMemo(() => {
+    return (
+      activeEventId === '33333333-3333-3333-3333-333333333301' ||
+      (activeEventName
+        ? activeEventName.toLowerCase().includes('ministry') ||
+          activeEventName.toLowerCase().includes('saturday')
+        : false)
+    );
+  }, [activeEventId, activeEventName]);
+
+  const canAutoCheckIn = !isMinistryEvent || role === 'Ministry Member';
 
   // Dynamic Age Calculation
   const computedAge = useMemo(() => {
@@ -308,7 +321,7 @@ function NewMemberScreen({
       });
 
       // Handle Auto Check-in if requested
-      if (autoCheckIn) {
+      if (autoCheckIn && canAutoCheckIn) {
         const targetEventId = activeEventId || '33333333-3333-3333-3333-333333333302';
         await logAttendance(newMember.id, targetEventId, role === 'Visitor');
       }
@@ -337,9 +350,9 @@ function NewMemberScreen({
       }
 
       Alert.alert(
-        'Registration Complete! 🎉',
+        'Registration Complete',
         `${firstName.trim()} ${lastName.trim()} was successfully registered${
-          autoCheckIn ? ` and checked in to ${activeEventName || "today's service"}` : ''
+          autoCheckIn && canAutoCheckIn ? ` and checked in to ${activeEventName || "today's service"}` : ''
         }.`,
         alertButtons,
       );
@@ -370,16 +383,11 @@ function NewMemberScreen({
               styles.roleOptionTitle,
               role === 'Ministry Member' && styles.roleOptionTitleActive,
             ]}>
-            🛡️ Ministry Member
+            Ministry Member
           </Text>
           <Text style={styles.roleOptionDesc}>
-            Serves Saturday & facilitates Sunday
+            Serves Saturday Service Ministry & Sunday Fellowship
           </Text>
-          {role === 'Ministry Member' && (
-            <View style={styles.roleBadgeMini}>
-              <Text style={styles.roleBadgeMiniText}>{ministryDept}</Text>
-            </View>
-          )}
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -394,16 +402,11 @@ function NewMemberScreen({
               styles.roleOptionTitle,
               role === 'Youth Member' && styles.roleOptionTitleActive,
             ]}>
-            🌟 Youth Member
+            Youth Member
           </Text>
           <Text style={styles.roleOptionDesc}>
             Youth fellowship attendee
           </Text>
-          {role === 'Youth Member' && (
-            <View style={styles.roleBadgeMini}>
-              <Text style={styles.roleBadgeMiniText}>Youth Fellowship</Text>
-            </View>
-          )}
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -418,22 +421,21 @@ function NewMemberScreen({
               styles.roleOptionTitle,
               role === 'Visitor' && styles.roleOptionTitleActive,
             ]}>
-            🤝 Visitor
+            Visitor
           </Text>
           <Text style={styles.roleOptionDesc}>
             First-time / guest intake
           </Text>
-          {role === 'Visitor' && (
-            <View style={styles.roleBadgeMini}>
-              <Text style={styles.roleBadgeMiniText}>Guest</Text>
-            </View>
-          )}
         </TouchableOpacity>
       </View>
 
-      {role === 'Ministry Member' && (
-        <View style={{ marginTop: 6 }}>
-          <Text style={styles.label}>Assigned Ministry Department</Text>
+      <View style={styles.classificationSlot}>
+        <Text style={styles.label}>
+          {role === 'Ministry Member'
+            ? 'Assigned Ministry Department'
+            : 'Congregation Track'}
+        </Text>
+        {role === 'Ministry Member' ? (
           <Dropdown
             label="Select Department"
             value={ministryDept}
@@ -443,8 +445,16 @@ function NewMemberScreen({
               setMinistry(dept);
             }}
           />
-        </View>
-      )}
+        ) : (
+          <View style={styles.lockedClassificationField}>
+            <Text style={styles.lockedClassificationText}>
+              {role === 'Youth Member'
+                ? 'Youth Ministry (Assigned to Youth Fellowship)'
+                : 'General Congregation / Guest (Unassigned)'}
+            </Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 
@@ -495,7 +505,7 @@ function NewMemberScreen({
         {computedAge ? (
           <View style={styles.ageBadge}>
             <Text style={styles.ageBadgeText}>
-              ✓ Age: {computedAge} years old (Computed)
+              Age: {computedAge} years old (Computed)
             </Text>
           </View>
         ) : (
@@ -569,7 +579,7 @@ function NewMemberScreen({
             onPress={() => handleModeChange('quick')}
             activeOpacity={0.85}>
             <Text style={[styles.modeTabText, mode === 'quick' && styles.modeTabTextActive]}>
-              ⚡ Quick Visitor Intake
+              Quick Visitor Intake
             </Text>
           </TouchableOpacity>
 
@@ -578,7 +588,7 @@ function NewMemberScreen({
             onPress={() => handleModeChange('full')}
             activeOpacity={0.85}>
             <Text style={[styles.modeTabText, mode === 'full' && styles.modeTabTextActive]}>
-              📋 Full Member Profile
+              Full Member Profile
             </Text>
           </TouchableOpacity>
         </View>
@@ -590,8 +600,8 @@ function NewMemberScreen({
             </View>
 
             <View style={styles.rightCol}>
-              {/* Card 0: Role & Classification */}
-              {renderRoleSelection()}
+              {/* Card 0: Role & Classification (Full Profile Only) */}
+              {mode === 'full' && renderRoleSelection()}
 
               {/* Card 1: Personal Details */}
               <View style={styles.card}>
@@ -805,22 +815,36 @@ function NewMemberScreen({
               )}
 
               {/* Auto Check-in Toggle Card */}
-              <TouchableOpacity
-                style={styles.autoCheckInCard}
-                onPress={() => setAutoCheckIn(!autoCheckIn)}
-                activeOpacity={0.8}>
-                <View style={styles.autoCheckInLeft}>
-                  <Text style={styles.autoCheckInTitle}>
-                    Instant Attendance Check-In
-                  </Text>
-                  <Text style={styles.autoCheckInSubtitle}>
-                    Automatically record attendee as Present for {activeEventName || "today's service"} upon registration
-                  </Text>
+              {isMinistryEvent && role !== 'Ministry Member' ? (
+                <View
+                  style={[styles.autoCheckInCard, { opacity: 0.7, borderColor: colors.border }]}>
+                  <View style={styles.autoCheckInLeft}>
+                    <Text style={[styles.autoCheckInTitle, { color: colors.textMuted }]}>
+                      Instant Attendance Check-In (Unavailable)
+                    </Text>
+                    <Text style={styles.autoCheckInSubtitle}>
+                      Saturday Service Ministry is restricted to Ministry Members only
+                    </Text>
+                  </View>
                 </View>
-                <View style={[styles.checkbox, autoCheckIn && styles.checkboxActive]}>
-                  {autoCheckIn && <Check size={14} color="#181614" strokeWidth={3} />}
-                </View>
-              </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.autoCheckInCard}
+                  onPress={() => setAutoCheckIn(!autoCheckIn)}
+                  activeOpacity={0.8}>
+                  <View style={styles.autoCheckInLeft}>
+                    <Text style={styles.autoCheckInTitle}>
+                      Instant Attendance Check-In
+                    </Text>
+                    <Text style={styles.autoCheckInSubtitle}>
+                      Automatically record attendee as Present for {activeEventName || "today's service"} upon registration
+                    </Text>
+                  </View>
+                  <View style={[styles.checkbox, autoCheckIn && styles.checkboxActive]}>
+                    {autoCheckIn && <Check size={14} color="#181614" strokeWidth={3} />}
+                  </View>
+                </TouchableOpacity>
+              )}
 
               {/* Submit CTA */}
               <TouchableOpacity
@@ -845,7 +869,8 @@ function NewMemberScreen({
           /* Portrait Layout */
           <View>
             {renderLeftPanel()}
-            {renderRoleSelection()}
+            {/* Role Selection (Full Profile Only) */}
+            {mode === 'full' && renderRoleSelection()}
             {/* Form cards follow */}
             <View style={styles.card}>
               <Text style={styles.cardTitle}>
@@ -883,20 +908,34 @@ function NewMemberScreen({
               />
             </View>
 
-            <TouchableOpacity
-              style={styles.autoCheckInCard}
-              onPress={() => setAutoCheckIn(!autoCheckIn)}
-              activeOpacity={0.8}>
-              <View style={styles.autoCheckInLeft}>
-                <Text style={styles.autoCheckInTitle}>Instant Check-In</Text>
-                <Text style={styles.autoCheckInSubtitle}>
-                  Automatically mark present for today's service
-                </Text>
+            {isMinistryEvent && role !== 'Ministry Member' ? (
+              <View
+                style={[styles.autoCheckInCard, { opacity: 0.7, borderColor: colors.border }]}>
+                <View style={styles.autoCheckInLeft}>
+                  <Text style={[styles.autoCheckInTitle, { color: colors.textMuted }]}>
+                    Instant Check-In (Unavailable)
+                  </Text>
+                  <Text style={styles.autoCheckInSubtitle}>
+                    Saturday Service Ministry is restricted to Ministry Members only
+                  </Text>
+                </View>
               </View>
-              <View style={[styles.checkbox, autoCheckIn && styles.checkboxActive]}>
-                {autoCheckIn && <Check size={14} color="#181614" strokeWidth={3} />}
-              </View>
-            </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.autoCheckInCard}
+                onPress={() => setAutoCheckIn(!autoCheckIn)}
+                activeOpacity={0.8}>
+                <View style={styles.autoCheckInLeft}>
+                  <Text style={styles.autoCheckInTitle}>Instant Check-In</Text>
+                  <Text style={styles.autoCheckInSubtitle}>
+                    Automatically mark present for today's service
+                  </Text>
+                </View>
+                <View style={[styles.checkbox, autoCheckIn && styles.checkboxActive]}>
+                  {autoCheckIn && <Check size={14} color="#181614" strokeWidth={3} />}
+                </View>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               style={[styles.submitButton, submitting && styles.submitButtonDisabled]}

@@ -184,7 +184,7 @@ export async function syncAttendanceToSupabase(
     if (error) {
       console.log('Supabase attendance sync error:', error.message);
     } else {
-      console.log(`Attendance logged in Supabase for member ${memberId} ✅`);
+      console.log(`Attendance logged in Supabase for member ${memberId}`);
     }
   } catch (err) {
     console.log('Offline — attendance saved locally, will sync later:', err);
@@ -317,7 +317,7 @@ async function syncMemberToSupabase(
     if (error) {
       console.log('Sync error for member:', error.message);
     } else {
-      console.log('Member synced to Supabase ✅');
+      console.log('Member synced to Supabase');
 
       // Sync emergency contact if present
       if (emergencyContact?.name && emergencyContact?.phone) {
@@ -390,7 +390,7 @@ export async function pullMembersFromCloud(): Promise<void> {
       }
     });
 
-    console.log(`Synced ${cloudMembers.length} members from cloud into local SQLite ✅`);
+    console.log(`Synced ${cloudMembers.length} members from cloud into local SQLite`);
   } catch (err) {
     console.log('Error pulling members:', err);
   }
@@ -435,7 +435,7 @@ export async function pullEventsFromCloud(): Promise<void> {
         }
       }
     });
-    console.log(`Synced ${cloudEvents.length} events from cloud into local SQLite ✅`);
+    console.log(`Synced ${cloudEvents.length} events from cloud into local SQLite`);
   } catch (err) {
     console.log('Error pulling events:', err);
   }
@@ -471,7 +471,7 @@ export async function pushUnsyncedAttendance(): Promise<void> {
         });
       }
     }
-    console.log(`Pushed ${unsyncedLogs.length} attendance logs to cloud ✅`);
+    console.log(`Pushed ${unsyncedLogs.length} attendance logs to cloud`);
   } catch (err) {
     console.log('Error pushing attendance logs:', err);
   }

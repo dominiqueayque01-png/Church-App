@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, radius, shadows, spacing } from '../../assets/style/theme';
+import { colors, radius, shadows, spacing, typography } from '../../assets/style/theme';
 
 // ── DROPDOWN & MODAL PICKER STYLES ────────────────────────
 export const dropdown = StyleSheet.create({
@@ -112,14 +112,15 @@ export const styles = StyleSheet.create({
     ...shadows.sm,
   },
   pageTitle: {
-    fontSize: 22,
-    fontWeight: '900',
+    fontFamily: typography.serif,
+    fontSize: 23,
+    fontWeight: '700',
     color: colors.textPrimary,
   },
   pageSubtitle: {
     fontSize: 12,
     color: colors.textSecondary,
-    marginTop: 2,
+    marginTop: 3,
   },
   scrollContent: {
     padding: 24,
@@ -174,7 +175,8 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   photoTitle: {
-    fontSize: 13,
+    fontFamily: typography.serif,
+    fontSize: 14,
     fontWeight: '700',
     color: colors.textPrimary,
     marginBottom: 2,
@@ -195,13 +197,14 @@ export const styles = StyleSheet.create({
     ...shadows.sm,
   },
   cardTitle: {
-    fontSize: 14,
-    fontWeight: '800',
+    fontFamily: typography.serif,
+    fontSize: 15,
+    fontWeight: '700',
     color: colors.textPrimary,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
     paddingBottom: 8,
-    marginBottom: 6,
+    marginBottom: 8,
   },
 
   // ── INPUT CONTROLS ────────────────────────────────────
@@ -346,6 +349,9 @@ export const styles = StyleSheet.create({
     borderRadius: radius.pill,
     alignSelf: 'flex-start',
     marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
   },
   ageBadgeText: {
     fontSize: 11,
@@ -435,6 +441,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 76,
   },
   roleOptionCardActive: {
     backgroundColor: colors.goldSubtle,
@@ -456,16 +463,22 @@ export const styles = StyleSheet.create({
     color: colors.textMuted,
     textAlign: 'center',
   },
-  roleBadgeMini: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: radius.pill,
-    backgroundColor: 'rgba(181, 151, 58, 0.15)',
+  classificationSlot: {
     marginTop: 4,
   },
-  roleBadgeMiniText: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: colors.goldDark,
+  lockedClassificationField: {
+    backgroundColor: '#f5f0e8',
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    minHeight: 41,
+    justifyContent: 'center',
+  },
+  lockedClassificationText: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    fontWeight: '600',
   },
 });

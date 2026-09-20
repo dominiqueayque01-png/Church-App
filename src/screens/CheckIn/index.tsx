@@ -92,9 +92,9 @@ function CheckInScreen({
 
   const filters = useMemo(() => {
     if (isSaturday) {
-      return ['All Ministry', 'Ushers', 'Worship Team', 'Media Team', 'Children Ministry', 'Visitors'];
+      return ['All Ministry', 'Worship Team', 'Ushers', 'Media Team', 'Children Ministry', 'General Ministry'];
     }
-    return ['All Attendees', 'Youth Members', 'Ministry Facilitators', 'Visitors'];
+    return ['All Attendees', 'Youth Members', 'Ministry', 'Visitors'];
   }, [isSaturday]);
 
   const [search, setSearch] = useState('');
@@ -196,11 +196,11 @@ function CheckInScreen({
   }, [loadData]);
 
   // Available members for the specific service:
-  // Saturday Gathering is strictly for Ministry Members and Saturday Visitors.
-  // Sunday Gathering includes Youth Members, Ministry Facilitators, and Visitors.
+  // Saturday Service Ministry is strictly for Ministry Members only (no other attendees).
+  // Sunday Gathering includes Youth Members, Ministry, and Visitors.
   const availableMembers = useMemo(() => {
     if (isSaturday) {
-      return membersList.filter(m => m.role === 'Ministry Member' || m.role === 'Visitor');
+      return membersList.filter(m => m.role === 'Ministry Member');
     }
     return membersList;
   }, [membersList, isSaturday]);
@@ -214,8 +214,6 @@ function CheckInScreen({
       if (isSaturday) {
         if (activeFilter === 'All Ministry') {
           matchFilter = true;
-        } else if (activeFilter === 'Visitors') {
-          matchFilter = m.role === 'Visitor';
         } else {
           matchFilter = m.ministryDept === activeFilter;
         }
@@ -224,7 +222,7 @@ function CheckInScreen({
           matchFilter = true;
         } else if (activeFilter === 'Youth Members') {
           matchFilter = m.role === 'Youth Member';
-        } else if (activeFilter === 'Ministry Facilitators') {
+        } else if (activeFilter === 'Ministry') {
           matchFilter = m.role === 'Ministry Member';
         } else if (activeFilter === 'Visitors') {
           matchFilter = m.role === 'Visitor';
@@ -323,12 +321,11 @@ function CheckInScreen({
           const count = availableMembers.filter(m => {
             if (isSaturday) {
               if (filter === 'All Ministry') return true;
-              if (filter === 'Visitors') return m.role === 'Visitor';
               return m.ministryDept === filter;
             } else {
               if (filter === 'All Attendees') return true;
               if (filter === 'Youth Members') return m.role === 'Youth Member';
-              if (filter === 'Ministry Facilitators') return m.role === 'Ministry Member';
+              if (filter === 'Ministry') return m.role === 'Ministry Member';
               if (filter === 'Visitors') return m.role === 'Visitor';
               return true;
             }
@@ -376,7 +373,7 @@ function CheckInScreen({
             <Text style={styles.emptyText}>
               {availableMembers.length === 0
                 ? (isSaturday
-                    ? 'No ministry members registered yet.\nRegister ministry members to track Saturday service.'
+                    ? 'No ministry members registered yet.\nRegister ministry members to track Service Ministry.'
                     : 'No members registered yet.\nTap "+ New Member" to add your first attendee.')
                 : 'No members match your filter'}
             </Text>
@@ -404,7 +401,7 @@ function CheckInScreen({
                   {item.role === 'Ministry Member' ? (
                     <View style={styles.roleBadgeGold}>
                       <Text style={styles.roleBadgeGoldText}>
-                        {isSaturday ? `Ministry • ${item.ministryDept}` : `Facilitator • ${item.ministryDept}`}
+                        {`Ministry • ${item.ministryDept}`}
                       </Text>
                     </View>
                   ) : item.role === 'Youth Member' ? (
@@ -434,7 +431,7 @@ function CheckInScreen({
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 size={14} color="#ffffff" strokeWidth={2} />
+                    <Check size={14} color="#ffffff" strokeWidth={2.4} />
                     <Text style={styles.checkInText}>Check In</Text>
                   </>
                 )}
@@ -447,23 +444,32 @@ function CheckInScreen({
   );
 
   // ── Present Attendees Panel ──
-  const renderPresentPanel = () => (
-    <View style={styles.presentPanelWrapper}>
-      <View style={styles.presentHeader}>
-        <View>
-          <Text style={styles.presentTitle}>Session Attendees</Text>
-          <Text style={styles.presentCount}>
-            {checkedIn.length} of {availableMembers.length} Present
-          </Text>
-        </View>
-        <View style={styles.presentRatioBadge}>
-          <Text style={styles.presentRatioText}>
-            {availableMembers.length > 0 ? Math.round((checkedIn.length / availableMembers.length) * 100) : 0}%
-          </Text>
-        </View>
-      </View>
+  const renderPresentPanel = () => {
+    const attendancePct = availableMembers.length > 0
+      ? Math.min(100, Math.round((checkedIn.length / availableMembers.length) * 100))
+      : 0;
 
-      <View style={styles.presentDivider} />
+    return (
+      <View style={styles.presentPanelWrapper}>
+        <View style={styles.presentHeader}>
+          <View>
+            <Text style={styles.presentTitle}>Session Attendees</Text>
+            <Text style={styles.presentCount}>
+              {checkedIn.length} of {availableMembers.length} Present
+            </Text>
+          </View>
+          <View style={styles.presentRatioBadge}>
+            <Text style={styles.presentRatioText}>{attendancePct}%</Text>
+          </View>
+        </View>
+
+        {/* Tactile Linear Progress Bar */}
+        <View style={styles.progressBarTrack}>
+          <View style={[styles.progressBarFill, { width: `${attendancePct}%` }]} />
+        </View>
+
+        <View style={styles.presentDivider} />
+
 
       <FlatList
         data={presentMembers}
@@ -483,7 +489,7 @@ function CheckInScreen({
                 {item.firstName} {item.lastName}
               </Text>
               <Text style={styles.presentTime}>
-                {item.time} • {item.role === 'Ministry Member' ? (isSaturday ? item.ministryDept : `Facilitator (${item.ministryDept})`) : item.role}
+                {item.time} • {item.role === 'Ministry Member' ? `Ministry (${item.ministryDept})` : item.role}
               </Text>
             </View>
             <TouchableOpacity
@@ -496,7 +502,8 @@ function CheckInScreen({
         )}
       />
     </View>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>

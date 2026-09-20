@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, radius, shadows, spacing } from '../../assets/style/theme';
+import { colors, radius, shadows, spacing, typography } from '../../assets/style/theme';
 
 export const FULL_WIDTH = 270;
 export const MINI_WIDTH = 58;
@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
   miniCrest: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: radius.md,
     backgroundColor: 'rgba(181, 151, 58, 0.12)',
     borderWidth: 1,
     borderColor: colors.borderGold,
@@ -80,7 +80,7 @@ export const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: colors.borderGold,
   },
   miniAvatarText: {
@@ -119,7 +119,7 @@ export const styles = StyleSheet.create({
   brandCrest: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.md,
     backgroundColor: 'rgba(181, 151, 58, 0.14)',
     borderWidth: 1,
     borderColor: colors.borderGoldStrong,
@@ -130,9 +130,10 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   churchName: {
-    fontSize: 13.5,
-    fontWeight: '800',
-    letterSpacing: 1.2,
+    fontFamily: typography.serif,
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 0.8,
     color: colors.goldLight,
   },
   churchSubtitle: {
@@ -224,6 +225,7 @@ export const styles = StyleSheet.create({
     borderColor: colors.borderGold,
     flexShrink: 0,
   },
+
   avatarText: {
     fontWeight: '700',
     fontSize: 14,
@@ -246,9 +248,9 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    paddingHorizontal: 6,
+    paddingHorizontal: 7,
     paddingVertical: 2,
-    borderRadius: radius.xs,
+    borderRadius: radius.pill,
     gap: 4,
   },
   roleBadgeUsher: {
@@ -339,7 +341,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 340,
     backgroundColor: colors.sidebarElevated,
-    borderRadius: radius.xl,
+    borderRadius: radius.lg, // 6px
     padding: 24,
     alignItems: 'center',
     borderWidth: 1,
@@ -347,9 +349,9 @@ export const styles = StyleSheet.create({
     ...shadows.dark,
   },
   logoutModalIconWrap: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 48,
+    height: 48,
+    borderRadius: radius.md,
     backgroundColor: colors.dangerBg,
     justifyContent: 'center',
     alignItems: 'center',
@@ -358,8 +360,9 @@ export const styles = StyleSheet.create({
     borderColor: colors.dangerBorder,
   },
   logoutModalTitle: {
+    fontFamily: typography.serif,
     fontSize: 18,
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.textInverse,
     marginBottom: 8,
   },
